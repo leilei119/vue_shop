@@ -70,8 +70,8 @@ export default {
         // 预验证痛过之后发起登录请求 返回promis用await async修饰
         const { data: res } = await this.$http.post('login', this.loginForm)
         // 判断是否登陆成功
-        if (res.meta.status !== 200) return this.$mes.error('登陆失败！')
-        this.$mes.success('登陆成功!')
+        if (res.meta.status !== 200) return this.$mess.error('登陆失败！')
+        this.$mess.success('登陆成功!')
 
         //登陆成功之后的行为
         //1.将token保存到客户端的sessionStorage中
@@ -140,4 +140,13 @@ strong {
   display: flex;
   justify-content: flex-end;
 }
+.loginbtn{
+    background: #1cbcc5;
+    border: 1px solid #fee202;
+    font-family: cursive;
+    color: #f5f5f5;
+    text-shadow: 6px 2px 2px #fee202;
+    border-radius: 27% !important;
+}
+
 </style>
