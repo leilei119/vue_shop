@@ -2,6 +2,8 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Login from './components/Login.vue'
 import Home from './components/home/home.vue'
+import Welcome from './components/home/welcome.vue'
+import Users from './components/home/user/users.vue'
 
 Vue.use(Router)
 
@@ -31,7 +33,20 @@ const router = new Router({
             meta: { // 具体权限  有无权限访问
                 //isAuth:false, //不参与权限
                 title: '后台主页'
-            }
+            },
+            redirect: '/welcome',//只要访问的是home就重定向到welcome
+            children: [
+                {
+                    name: 'huanying',
+                    path: '/welcome',
+                    component: Welcome
+                },
+                {
+                    name: 'usersList',
+                    path: '/users',
+                    component: Users
+                }
+            ]
         }
     ]
 })

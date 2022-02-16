@@ -1,4 +1,9 @@
 /* 全局样式表 */
+* {
+    margin: 0;
+    padding: 0;
+}
+
 html,
 body,
 div,
@@ -280,14 +285,7 @@ textarea {
     border-bottom: 1px #606266 dashed;
 }
 
-.el-button {
-    background: #1cbcc5;
-    border: 1px solid #fee202;
-    font-family: cursive;
-    color: #f5f5f5;
-    text-shadow: 6px 2px 2px #fee202;
-    border-radius: 27% !important;
-}
+
 
 .el-button:focus,
 .el-button:hover,
@@ -296,4 +294,51 @@ textarea {
     border-color: #feffff;
     background-color: #ffeb3b;
     text-shadow: 6px 2px 2px #9be184;
+}
+
+.el-breadcrumb{
+    margin-bottom: 20px;
+}
+
+.el-card{
+    box-shadow: 0 1px 5px 0 rgb(254 189 80) !important;
+    background-color: #f4f5f4;
+    color: #839093;
+    font-size: 14px;
+}
+
+.el-row{
+    margin-bottom: 20px;
+}
+
+.el-table{
+    border-radius: 10px;
+    font-size: 12px;
+}
+.el-table thead.is-group th.el-table__cell {
+    background: #9af1ff;
+}
+
+.el-pagination{
+    margin-top: 20px;
+}
+
+.el-dialog__header {
+    background-color: #9af1ff;
+}
+.el-dialog__title{
+    font-size: 14px;
+}
+
+.el-dialog__body {
+    background-color: #febd50;
+}
+.el-dialog__footer {
+    background-color: #febd50;
+}
+
+.el-input.is-disabled .el-input__inner{
+    background-color: #febd50;
+    border-color: #9da2ab;
+    color: #9da2ab;
 }
