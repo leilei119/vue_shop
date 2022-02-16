@@ -509,6 +509,17 @@
         this.$mess.success('删除用户成功！')
     }
 ### 将用户列表功能代码提交到git
-    git branch              查看所处分支
-    git checkout -b user    创建新的分支并切换到user分支上
-    git branch              查看所处分支
+    git branch                              查看所处分支
+    git checkout -b user                    创建新的分支并切换到user分支上
+    git branch                              查看所处分支
+    git status                              检查当前user上文件状态 都是红色
+    git add .                               将所有文件添加到暂存区
+    git status                              再重新检查状态，都是绿色
+    git commit -m "完成了用户列表功能的开发"  将user分支提交到仓库中
+
+    现在看github/码云中并没有user的分支，吧user分支推送到云端的github/码云中
+    git push -u origin user    吧本地user分支推送到云端origin仓库中保存，同时以user分支进行保存（第一次提交  要加-u origin user）
+    吧所有代码合并到主分支上
+    git checkout master   切换到主分支
+    git merge user        吧user里的代码合并到主分支
+    git push              吧本地master提交到云端进行保存（已经有master  就不需要加后面的-u ）
