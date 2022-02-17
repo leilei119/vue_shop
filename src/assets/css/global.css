@@ -264,7 +264,9 @@ body,
 
     font-family: '微软雅黑';
 
-    overflow: hidden;
+    /* overflow: hidden; */
+
+    min-width: 1366px;
 
 }
 
@@ -307,16 +309,13 @@ textarea {
     font-size: 14px;
 }
 
-.el-row{
-    margin-bottom: 20px;
-}
 
 .el-table{
     border-radius: 10px;
     font-size: 12px;
 }
 .el-table thead.is-group th.el-table__cell {
-    background: #9af1ff;
+    background: #eff8fa;
 }
 
 .el-pagination{
@@ -341,4 +340,11 @@ textarea {
     background-color: #febd50;
     border-color: #9da2ab;
     color: #9da2ab;
+}
+.cont {
+    font-size: 12px;
+    font-weight: 400;
+    color: #606266;
+    cursor: text;
+    font-weight: inherit;
 }

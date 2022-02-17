@@ -3,7 +3,7 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from './router' //引入router.js
 import './assets/css/global.css' // 导入全局样式表
-import { Dialog, Form, FormItem, Input, Button, Message, Container, Header, Aside, Main, Menu, Submenu, MenuItem, Breadcrumb, BreadcrumbItem, Card, Row, Col, Table, TableColumn, Switch, Tooltip ,Pagination,MessageBox} from 'element-ui'
+import { Select,Option,Tree,Tag,Dialog, Form, FormItem, Input, Button, Message, Container, Header, Aside, Main, Menu, Submenu, MenuItem, Breadcrumb, BreadcrumbItem, Card, Row, Col, Table, TableColumn, Switch, Tooltip ,Pagination,MessageBox} from 'element-ui'
 import axios from 'axios'
 
 Vue.use(Form)
@@ -29,6 +29,10 @@ Vue.use(Tooltip)
 Vue.use(Pagination)
 Vue.use(Form)
 Vue.use(Dialog)
+Vue.use(Tag)
+Vue.use(Tree)
+Vue.use(Select)
+Vue.use(Option)
 
 
 Vue.prototype.$mess = Message//全局配置Message 将Message组件挂载到vue的原型对象上

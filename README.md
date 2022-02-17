@@ -221,6 +221,11 @@
             // 保存激活的状态地址
             this.activePath=window.sessionStorage.getItem('activePath')
         },
+### element表格展开列和索引列
+    <!-- 展开列 -->
+    <el-table-column type="expand"></el-table-column>
+    <!-- 索引列 -->
+    <el-table-column type="index"></el-table-column>
 
 ## 通过接口获取菜单数据
     通过axios请求拦截器添加token，保证拥有获取数据的权限
@@ -523,3 +528,223 @@
     git checkout master   切换到主分支
     git merge user        吧user里的代码合并到主分支
     git push              吧本地master提交到云端进行保存（已经有master  就不需要加后面的-u ）
+
+## 权限管理功能开发
+    新的功能开始 创建个新的分支
+    git checkout -b rights
+    吧本地的分支rights推送到云端进行保存（第一次推送）
+    git push -u origin rights
+### 角色下权限数据的渲染以及删除
+    作用域茶菜取到的scope数据美化
+    <pre>{{ scope.row }}</pre>
+
+    <!-- 展开列 使用作用域插槽实现展开列下面的权限列表-->
+    <el-table-column type="expand">
+        <template slot-scope="scope">
+        <!-- 添加动态样式类， bdbottom所有row都有底边框线，bdtop顶边框线只有在下标为0的元素上才有 -->
+        <el-row v-for="(item1, i1) in scope.row.children" :key="item1.id" :class="['bdbottom', i1 === 0 ? 'bdtop' : '','vcenter']">
+
+            <!-- 渲染一级权限 -->
+            <el-col :span="5">
+            <el-tag closable @close="removeRightsById(scope.row,item1.id)">> {{ item1.authName }} </el-tag>
+            <i class="el-icon-caret-right"></i>
+            </el-col>
+
+            <!-- 渲染二级和三级权限 -->
+            <el-col :span="19">
+
+            <!-- 添加动态样式类， 下标为0的元素上不加上边框线bdtop，其余都加 -->
+            <el-row v-for="(item2,i2) in item1.children" :key="item2.id" :class="[i2 === 0 ? '' : 'bdtop','vcenter']">
+                    <!-- 渲染二级权限 -->
+                <el-col :span="6">
+                    <el-tag type="success" closable @close="removeRightsById(scope.row,item2.id)">> {{ item2.authName }} </el-tag>
+                    <i class="el-icon-caret-right"></i>
+                </el-col>
+
+                <!-- 渲染三级权限 -->
+                <el-col :span="18">
+                    <el-tag type="warning" v-for="item3 in item2.children" :key="item3.id" closable @close="removeRightsById(scope.row,item3.id)">> {{ item3.authName }} </el-tag>
+                </el-col>
+            </el-row>
+            </el-col>
+        </el-row>
+        </template>
+    </el-table-column>
+
+     // 获取角色列表数据
+    async getRolesList() {
+      const { data: res } = await this.$http.get('roles')
+      if (res.meta.status !== 200)
+        return this.$mess.error('获取角色列表失败哦~')
+
+      this.rolesList = res.data
+    },
+    // 根据id删除对应的权限
+    async removeRightsById(roles,rightsId){
+        // 弹框提示是否删除
+        const confirmRes = await this.$confirm('确认删除此权限吗？','提示',{
+            confirmButtonText:'确定',
+            cancelButtonText:'取消',
+            type:'warning'
+        }).catch(err =>err)
+        // 取消删除
+        if(confirmRes !== 'confirm') return this.$mess.info('取消了删除.')
+
+        // 调删除接口
+        const {data:res} = await this.$http.delete(`roles/${roles.id}/rights/${rightsId}`)
+        if(res.meta.status!==200) return this.$mess.error('删除权限失败！')
+        // 刷新权限列表   返回的data, 是当前角色下最新的权限数据 
+        // 吧服务器返回的数据直接赋值给角色的children属性
+        roles.children = res.data
+        this.$mess.success('删除权限成功！')
+    }
+### 分配权限的功能
+#### 树形结构element
+    <!-- 主体区域  树形控件 treeProps:要展示的对象    多选框          默认全部打开所有节点        选中的值是唯一id而不是文本-->
+    <el-tree :data="rightsList" :props="treeProps" show-checkbox :default-expand-all="true" node-key="id"></el-tree>
+#### 吧已有的权限在树形结构中默认勾选上（递归函数的方式吧三级节点id保存到数组中）
+    tree：   :default-checked-keys="defCheckedKeys" //默认选中的数组
+    el-dialog：@close="serRightsDialogClose"    //监听关闭对话框
+    data：   defCheckedKeys:[],                //树形结构中默认选中的节点id值数组
+             rolesId:'',     //当前要授权的角色id
+    methods：
+            // 打开对话框并获取所有的权限数据role（scope.row）就是当前角色，是最父级的节点
+            async openRightsDialog(role) {
+                
+                // 将当前角色id保存，用于后面的具体授权
+                this.rolesId = role.id
+
+                const { data: res } = await this.$http('rights/tree')
+                if (res.meta.status !== 200) return this.$mess.error('获取权限列表失败！')
+                this.rightsList = res.data
+                
+                // 递归获取三级的节点的id 在打开属性结构时，就把已有的权限选中
+                this.getDefCheckedKeys(role,this.defCheckedKeys)
+                // 打开权限配置对话框
+                this.rightsDialogVisible = true
+            },
+            // 通过递归的形式，获取角色下所有三级权限的id，并保存到defCheckedKeys数组中
+            // node节点：父级角色-用来判断三级节点   arr数组：用来保存数组
+            getDefCheckedKeys(node,arr){
+                // 先判断是否为三级节点:三级节点不包含children
+                if(!node.children){
+                    // 是三级节点：将节点中的id保存起来
+                    return arr.push(node.id)
+                }
+                // 不是三级节点：通过递归获取到最终的三级节点  
+                // 循环当前node里面的所有children数组，每循环一项拿到一个子节点item，再根据item再次调用递归函数，把当前item当做一个子节点给传进去，同时吧数组也传进去，只要递归完毕，就把所有三级节点id保存到了数组里面
+                node.children.forEach(item => {
+                    this.getDefCheckedKeys(item,arr)
+                });
+            },
+            // 关闭对话框就把默认选中数组中的数据清空一下
+            serRightsDialogClose(){
+                this.defCheckedKeys=[]
+            }
+#### 分配权限功能
+    tree: ref="treeRef"   //给tree一个引用对象
+    获取当前要授权的角色id
+    data：....
+         rolesId:'',//当前要授权的角色id
+    methods：async openRightsDialog(role) {
+                // 将当前角色id保存  用于后面的具体授权
+                this.rolesId = role.id
+                ......
+            }
+            // 点击分配权限对话框中确定按钮   给角色授权
+            async setRights(){
+            // 获取到点击授权的角色id（半选）和权限id（全选） 给tree个引用对象treeRef  调用tree的方法获取id
+            const keys = [
+                ...this.$refs.treeRef.getCheckedKeys(),
+                ...this.$refs.treeRef.getHalfCheckedKeys()
+            ]
+
+            // 接口要求授权id要用' ，'号分割
+            const idStr = keys.join(',')
+
+            const {data:res} = await this.$http.post(`roles/${this.rolesId}/rights`,{rids:idStr})
+            if(res.meta.status!==200) return this.$mess.error('分配权限失败！')
+
+            this.$mess.success('分配权限成功！')
+            // 刷新一下角色列表
+            this.getRolesList()
+            // 关闭对话框
+            this.rightsDialogVisible = false
+
+            }
+
+#### 用户列表功能中的分配角色功能
+    <el-button
+        type="warning"
+        icon="el-icon-s-tools"
+        circle
+        @click="openRolesDialog(scope.row)"    点击分配角色按钮打开对话框，将用户信息传过去
+    ></el-button>
+
+    dialog：<div>              用户信息双向绑定
+                <p>当前用户：{{ userinfoByRoles.username }}</p>
+                <p>当前角色：{{ userinfoByRoles.role_name }}</p>
+                <p>
+                    分配新角色：          选中的新角色id
+                    <el-select v-model="selectRolesId" placeholder="请选择">
+                    <el-option
+                        v-for="item in rolesList"
+                        :key="item.id"
+                        :label="item.roleName"    下拉框文本
+                        :value="item.id"          下拉框id
+                    >
+                    </el-option>
+                    </el-select>
+                </p>
+            </div>
+    
+    data：....
+            userinfoByRoles: {}, // 需要被分配角色的用户信息
+            setRolesDialogVisible: false, //显示或隐藏分配角色的对话框
+            selectRolesId:'',//下拉框选择的新角色
+            rolesList: [], //所有角色的数据列表(需要循环渲染角色列表)
+    methods:...
+            // 点击分配角色按钮弹出对话框
+            async openRolesDialog(userinfo) {
+                // 吧要分配角色的用户信息存起来
+                this.userinfoByRoles = userinfo
+
+                // 在打开分配角色的对话框之前，获取所有角色列表
+                const { data: res } = await this.$http.get('roles')
+                if (res.meta.status !== 200) return this.$mess.error('获取角色列表失败！')
+
+                this.rolesList = res.data
+
+                // 打开对话框
+                this.setRolesDialogVisible = true
+            },
+            // 将分配的新角色selectRolesId保存到后台用户userinfoByRoles.id身上
+            async saveRolesInfo() {
+                // 有没有新角色
+                if(!this.selectRolesId) return this.$mess.info('请选择要分配的角色')
+
+                const {data:res} = await this.$http.put(`users/${this.userinfoByRoles.id}/role`,{rid:this.selectRolesId})
+                if(res.meta.status !==200) return this.$mess.error('更新角色失败')
+
+                this.$mess.success('更新角色成功！')
+                //  刷新用户列表
+                this.getUsersList()
+                // 关闭对话框
+                this.setRolesDialogVisible = false
+            },
+            // 监听分配角色对话框关闭事件，重置下拉框
+            setRolesDialogClosed(){
+                this.selectRolesId = ''
+                this.userinfoByRoles = {}
+            }
+### 推送权限管理功能代码到github
+    git branch                              查看分支
+    git add .                               所有修改过得文件添加到暂存区
+    git commit -m "完成了权限功能的开发"      将代码提交到rights分支
+    git push                                吧本地rights分支push到github的rights分支中，不需要加-u因为云端已经有了rights分支
+    git checkout                            切换到主分支
+    git merge rights                        吧本地rights分支中的代码合并到本地master主分支
+    git push                                再把本地master推送到github的master中进行保存
+
+
+

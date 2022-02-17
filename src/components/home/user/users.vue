@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- 面包屑导航区域 -->
-    <el-breadcrumb class="usercont">
+    <el-breadcrumb class="cont">
       <el-breadcrumb-item :to="{ path: '/welcome' }">首页</el-breadcrumb-item>
       <el-breadcrumb-item>用户管理</el-breadcrumb-item>
       <el-breadcrumb-item>用户列表</el-breadcrumb-item>
@@ -54,17 +54,17 @@
         ></el-table-column>
         <el-table-column label="操作信息">
           <el-table-column label="状态">
-              <!-- 使用作用域插槽实现状态的展示 -->
-              <template slot-scope="scope">
-                <!-- {{scope.row}} 能取到这一行的所有数据-->
-                <el-switch
-                  v-model="scope.row.mg_state"
-                  active-color="#1cbcc5"
-                  inactive-color="#ff4949"
-                  @change="handelSwitchState(scope.row)"
-                >
-                </el-switch>
-              </template>
+            <!-- 使用作用域插槽实现状态的展示 -->
+            <template slot-scope="scope">
+              <!-- {{scope.row}} 能取到这一行的所有数据-->
+              <el-switch
+                v-model="scope.row.mg_state"
+                active-color="#1cbcc5"
+                inactive-color="#ff4949"
+                @change="handelSwitchState(scope.row)"
+              >
+              </el-switch>
+            </template>
           </el-table-column>
           <el-table-column label="操作" width="180">
             <template slot-scope="scope">
@@ -83,29 +83,30 @@
                 ></el-button>
               </el-tooltip>
               <el-tooltip
-                  effect="dark"
-                  content="删除"
-                  placement="top"
-                  :enterable="false"
-                >
-                  <el-button
-                    type="danger"
-                    icon="el-icon-delete"
-                    circle
-                    @click="removeUserById(scope.row.id)"
-                  ></el-button>
+                effect="dark"
+                content="删除"
+                placement="top"
+                :enterable="false"
+              >
+                <el-button
+                  type="danger"
+                  icon="el-icon-delete"
+                  circle
+                  @click="removeUserById(scope.row.id)"
+                ></el-button>
               </el-tooltip>
               <el-tooltip
-                  effect="dark"
-                  content="分配角色"
-                  placement="top"
-                  :enterable="false"
-                >
-                  <el-button
-                    type="warning"
-                    icon="el-icon-s-tools"
-                    circle
-                  ></el-button>
+                effect="dark"
+                content="分配角色"
+                placement="top"
+                :enterable="false"
+              >
+                <el-button
+                  type="warning"
+                  icon="el-icon-s-tools"
+                  circle
+                  @click="openRolesDialog(scope.row)"
+                ></el-button>
               </el-tooltip>
             </template>
           </el-table-column>
@@ -180,6 +181,39 @@
             >取 消</el-button
           >
           <el-button class="tjyh" @click="editUser">确 定</el-button>
+        </div>
+      </el-dialog>
+
+      <!-- 分配角色的对话框区域 -->
+      <el-dialog
+        title="分配角色"
+        :visible.sync="setRolesDialogVisible"
+        width="50%"
+        @close="setRolesDialogClosed"
+      >
+        <!-- 内容区域 -->
+        <div>
+          <p>当前用户：{{ userinfoByRoles.username }}</p>
+          <p>当前角色：{{ userinfoByRoles.role_name }}</p>
+          <p>
+            分配新角色：
+            <el-select v-model="selectRolesId" placeholder="请选择">
+              <el-option
+                v-for="item in rolesList"
+                :key="item.id"
+                :label="item.roleName"
+                :value="item.id"
+              >
+              </el-option>
+            </el-select>
+          </p>
+        </div>
+        <!-- 底部区域 -->
+        <div slot="footer" class="dialog-footer">
+          <el-button class="bt" @click="setRolesDialogVisible = false"
+            >取 消</el-button
+          >
+          <el-button class="tjyh" @click="saveRolesInfo">确 定</el-button>
         </div>
       </el-dialog>
     </el-card>
@@ -258,6 +292,11 @@ export default {
         email: [{ required: true, validator: checkemail, trigger: 'blur' }],
         mobile: [{ required: true, validator: checkmobile, trigger: 'blur' }],
       },
+
+      userinfoByRoles: {}, // 需要被分配角色的用户信息
+      setRolesDialogVisible: false, //显示或隐藏分配角色的对话框
+      selectRolesId:'',//下拉框选择的新角色
+      rolesList: [], //所有角色的数据列表(需要循环渲染角色列表)
     }
   },
   created() {
@@ -349,7 +388,7 @@ export default {
       })
     },
     // 点击删除按钮弹出提示信息,并根据用户id删除对应信息
-    async removeUserById(id){
+    async removeUserById(id) {
       // 弹框---- 第一种书写方式
       // this.$confirm('是否确定删除此用户？','提示',{
       //   confirmButtonText:'确定',
@@ -368,31 +407,60 @@ export default {
 
       // 第二种书写方式
       const confirmResult = await this.$confirm(
-        '是否确定删除此用户？','提示',{
-          confirmButtonText:'确定',
-          cancelButtonText:'取消',
-          type: 'warning'
-      }).catch(err => err)
+        '是否确定删除此用户？',
+        '提示',
+        {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning',
+        }
+      ).catch((err) => err)
 
       // 如果用户点击确认，返回字符串 confirm，取消，返回字符串 cancel
-      if(confirmResult !== 'confirm') return this.$mess.info('已取消删除.')
-      const {data:res} = await this.$http.delete('users/'+id)
-      if(res.meta.status!==200) return this.$mess.error('删除用户失败！')
-        // 刷新用户列表
-        this.getUsersList()
-        this.$mess.success('删除用户成功！')
+      if (confirmResult !== 'confirm') return this.$mess.info('已取消删除.')
+      const { data: res } = await this.$http.delete('users/' + id)
+      if (res.meta.status !== 200) return this.$mess.error('删除用户失败！')
+      // 刷新用户列表
+      this.getUsersList()
+      this.$mess.success('删除用户成功！')
+    },
+    // 点击分配角色按钮弹出对话框
+    async openRolesDialog(userinfo) {
+      // 吧要分配角色的用户信息存起来
+      this.userinfoByRoles = userinfo
+
+      // 在打开分配角色的对话框之前，获取所有角色列表
+      const { data: res } = await this.$http.get('roles')
+      if (res.meta.status !== 200) return this.$mess.error('获取角色列表失败！')
+
+      this.rolesList = res.data
+
+      // 打开对话框
+      this.setRolesDialogVisible = true
+    },
+    // 将分配的新角色selectRolesId保存到后台用户userinfoByRoles.id身上
+    async saveRolesInfo() {
+      // 有没有新角色
+      if(!this.selectRolesId) return this.$mess.info('请选择要分配的角色')
+
+      const {data:res} = await this.$http.put(`users/${this.userinfoByRoles.id}/role`,{rid:this.selectRolesId})
+      if(res.meta.status !==200) return this.$mess.error('更新角色失败')
+
+      this.$mess.success('更新角色成功！')
+      //  刷新用户列表
+      this.getUsersList()
+      // 关闭对话框
+      this.setRolesDialogVisible = false
+    },
+    // 监听分配角色对话框关闭事件，重置下拉框
+    setRolesDialogClosed(){
+      this.selectRolesId = ''
+      this.userinfoByRoles = {}
     }
   },
 }
 </script>
 <style scoped>
-.usercont {
-  font-size: 12px;
-  font-weight: 400;
-  color: #606266;
-  cursor: text;
-  font-weight: inherit;
-}
 .ss {
   background-color: aliceblue !important;
 }
