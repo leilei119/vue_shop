@@ -3,7 +3,7 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from './router' //引入router.js
 import './assets/css/global.css' // 导入全局样式表
-import { Cascader, Select, Option, Tree, Tag, Dialog, Form, FormItem, Input, Button, Message, Container, Header, Aside, Main, Menu, Submenu, MenuItem, Breadcrumb, BreadcrumbItem, Card, Row, Col, Table, TableColumn, Switch, Tooltip, Pagination, MessageBox } from 'element-ui'
+import { Tabs,TabPane, Alert,Cascader, Select, Option, Tree, Tag, Dialog, Form, FormItem, Input, Button, Message, Container, Header, Aside, Main, Menu, Submenu, MenuItem, Breadcrumb, BreadcrumbItem, Card, Row, Col, Table, TableColumn, Switch, Tooltip, Pagination, MessageBox } from 'element-ui'
 import axios from 'axios'
 import TreeTable from 'vue-table-with-tree-grid'
 
@@ -35,6 +35,10 @@ Vue.use(Tree)
 Vue.use(Select)
 Vue.use(Option)
 Vue.use(Cascader)
+Vue.use(Alert)
+Vue.use(Tabs)
+Vue.use(TabPane)
+
 
 Vue.prototype.$mess = Message//全局配置Message 将Message组件挂载到vue的原型对象上
 Vue.prototype.$confirm = MessageBox.confirm//全局配置MessageBox 将MessageBox组件挂载到vue的原型对象上

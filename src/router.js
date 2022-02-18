@@ -7,7 +7,7 @@ import Users from './components/home/user/users.vue'
 import Rights from './components/home/power/Rights.vue'
 import Roles from './components/home/power/Roles.vue'
 import Cate from './components/goods/Cate.vue'
-import Para from './components/goods/Para.vue'
+import Params from './components/goods/Params.vue'
 import Goods from './components/goods/Goods.vue'
 
 Vue.use(Router)
@@ -69,7 +69,7 @@ const router = new Router({
                 {// 分类参数
                     name:'cateParam',
                     path:'/params',
-                    component:Para
+                    component:Params
                 },
                 {// 商品列表
                     name:'goodList',

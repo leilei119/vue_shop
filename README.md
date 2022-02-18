@@ -32,11 +32,11 @@
     提交到远程仓库: git push origin master
 
 
-## 登录功能
-### 每做一个功能  就创建一个子分支  最后在整合
+# 登录功能
+## 每做一个功能  就创建一个子分支  最后在整合
                           git checkout -b login    
         查看当前所有分支   git branch
-### 登录全部做完提交到github
+## 登录全部做完提交到github
         git status                          查看状态
         git add .                           所有代码提交到暂存区
         git status                          再次查看状态
@@ -96,12 +96,12 @@
     // 跳转到登录页
     this.$router.push('/login)
 
-## MVVM模型
+# MVVM模型
     M：对应data中的数据
     V：模板
     VM：Vue实例对象
 
-## 插件
+# 插件
 ### axios:发送网络请求
     安装：npm i axios   
     //main.js中全局配置
@@ -126,7 +126,6 @@
 
     if(res.meta.status !== 200) return this.$mes.error('登陆失败！')
     this.$mes.success( '登陆成功!')
-
 ### vuex：对Vue应用中多个组件的共享状态进行集中式的管理（读/写）
 ### vue-router:专门来实现单页面(SPA)应用
 #### 路由的基本使用
@@ -164,8 +163,8 @@
     this.$router.
 ### 按需引入 ：npm install babel-plugin-component -D 
 
-## element-ui
-### form表单
+# element-ui
+## form表单
     表单都必须有一个 ：model='loginform' 来管理表单项的属性  v-model="loginform.name"
     在data中进行统一管理
     data() {
@@ -237,8 +236,9 @@
     <el-table-column type="expand"></el-table-column>
     <!-- 索引列 -->
     <el-table-column type="index"></el-table-column>
+### element动态编辑标签tag（+new tag）
 
-## 通过接口获取菜单数据
+# 通过接口获取菜单数据
     通过axios请求拦截器添加token，保证拥有获取数据的权限
     // 配置请求的根路径
     axios.defaults.baseURL = 'http://127.0.0.1:8888/api/private/v1/'
@@ -253,6 +253,7 @@
     //全局配置axios  将ajax挂载到vue的原型对象上
     Vue.prototype.$http = axios
 
+#  用户列表
 ## 查询用户列表
 ### 请求接口时如果有多个参数要求，可以写成一个参数对象
     data() {
@@ -325,7 +326,7 @@
       // console.log(`当前页: ${newpagenum}`);
     },
 
-### 用户状态修改：开关按钮   保存到后台数据库
+## 用户状态修改：开关按钮   保存到后台数据库
     <el-table-column label="状态">
         <!-- 使用作用域插槽实现状态的展示 -->
         <template slot-scope="scope">
@@ -351,7 +352,7 @@
         this.$mess.success('更新状态成功.')
     }
 
-### 搜索功能
+## 搜索功能
      v-model双向绑定
      @click="getUsersList" 直接绑定获取用户数据的方法
      clearable属性可得到一个可清空的输入框使用clearable属性即可得到一个可清空的输入框
@@ -375,8 +376,8 @@
         }
     },
 
-### 添加用户的功能
-#### element对话框
+## 添加用户的功能
+### element对话框
     <!-- 对话框区域 -->           对话框是否打开的属性                           关闭对话框的事件
     <el-dialog title="添加用户" :visible.sync="addDialogVisible" width="50%" @close="addDialogClosed">
     <!-- 内容区域 -->
@@ -404,7 +405,7 @@
             this.$refs.addFormRef.resetFields()
         }
     }
-#### element自定义校验规则
+### element自定义校验规则
      data() {
         // 自定义校验规则：邮箱 rule：校验规则  value：要校验的值 callback：回调函数
         var checkemail = (rule, value, callback) => {
@@ -423,7 +424,7 @@
         email: [{ required: true,validator: checkemail, trigger: 'blur' }],
       },
     }
-#### 添加用户
+### 添加用户
     <!-- 底部区域 -->
     <div slot="footer" class="dialog-footer">
         <el-button class="bt" @click="addDialogVisible = false"
@@ -451,8 +452,8 @@
         })
     }
 
-### 用户修改操作功能
-#### 打开修改的对话框之后需要吧用户信息展示出来，根据id查询用户信息
+## 用户修改操作功能
+### 打开修改的对话框之后需要吧用户信息展示出来，根据id查询用户信息
     return {
       editDialogVisible:false,// 修改用户的对话框的显示和隐藏
       editForm:{},//修改用户的信息
@@ -483,7 +484,7 @@
       if(res.meta.status!==200) return this.$mess.error('获取用户信息失败！')
       this.editForm =res.data
     },
-#### 修改用户信息并提交
+### 修改用户信息并提交
     editUser(){
       this.$refs.editFormRef.validate(async valid=>{
         // 预验证未通过
@@ -500,7 +501,7 @@
       })
     }
 
-### 删除用户的操作 根据用户id进行删除
+## 删除用户的操作 根据用户id进行删除
     <el-button
     type="danger"
     icon="el-icon-delete"
@@ -540,12 +541,12 @@
     git merge user        吧user里的代码合并到主分支
     git push              吧本地master提交到云端进行保存（已经有master  就不需要加后面的-u ）
 
-## 权限管理功能开发
+# 权限管理功能开发
     新的功能开始 创建个新的分支 并切换到新分支上
     git checkout -b rights
     吧本地的分支rights推送到云端进行保存（第一次推送）
     git push -u origin rights
-### 角色下权限数据的渲染以及删除
+## 角色下权限数据的渲染以及删除
     作用域茶菜取到的scope数据美化
     <pre>{{ scope.row }}</pre>
 
@@ -609,11 +610,11 @@
         roles.children = res.data
         this.$mess.success('删除权限成功！')
     }
-### 分配权限的功能
-#### 树形结构element
+## 分配权限的功能
+### 树形结构element
     <!-- 主体区域  树形控件 treeProps:要展示的对象    多选框          默认全部打开所有节点        选中的值是唯一id而不是文本-->
     <el-tree :data="rightsList" :props="treeProps" show-checkbox :default-expand-all="true" node-key="id"></el-tree>
-#### 吧已有的权限在树形结构中默认勾选上（递归函数的方式吧三级节点id保存到数组中）
+### 吧已有的权限在树形结构中默认勾选上（递归函数的方式吧三级节点id保存到数组中）
     tree：   :default-checked-keys="defCheckedKeys" //默认选中的数组
     el-dialog：@close="serRightsDialogClose"    //监听关闭对话框
     data：   defCheckedKeys:[],                //树形结构中默认选中的节点id值数组
@@ -652,7 +653,7 @@
             serRightsDialogClose(){
                 this.defCheckedKeys=[]
             }
-#### 分配权限功能
+### 分配权限功能
     tree: ref="treeRef"   //给tree一个引用对象
     获取当前要授权的角色id
     data：....
@@ -684,7 +685,7 @@
 
             }
 
-#### 用户列表功能中的分配角色功能
+### 用户列表功能中的分配角色功能
     <el-button
         type="warning"
         icon="el-icon-s-tools"
@@ -748,7 +749,7 @@
                 this.selectRolesId = ''
                 this.userinfoByRoles = {}
             }
-### 推送权限管理功能代码到github
+## 推送权限管理功能代码到github
     git branch                              查看分支
     git add .                               所有修改过得文件添加到暂存区
     git commit -m "完成了权限功能的开发"      将代码提交到rights分支
@@ -757,8 +758,9 @@
     git merge rights                        吧本地rights分支中的代码合并到本地master主分支
     git push                                再把本地master推送到github的master中进行保存
 
-## 商品管理-商品分类功能开发
-    新的功能开始 创建个新的分支 并切换到新分支上
+# 商品管理
+## 商品分类功能开发
+### 新的功能开始 创建个新的分支 并切换到新分支上
     git checkout -b goods_cate
     吧本地的分支rights推送到云端进行保存（第一次推送）
     git push -u origin goods_cate
@@ -817,9 +819,8 @@
               >删除</el-button
             >
         </template>
-    </tree-table>
-    
-#### element树形表格（这个索引值所有的都有，排序乱）
+    </tree-table>   
+### element树形表格（这个索引值所有的都有，排序乱）
      <!-- 表格区域 -->
       <el-table
         :data="cateList"
@@ -943,5 +944,324 @@
     git checkout master
     git merge goods_cate
     git push
-    
 
+## 分类参数功能开发
+### 新的功能开始 创建个新的分支 并切换到新分支上
+    git branch
+    git checkout -b goods_params
+    git branch
+    git push -u origin goods_params
+### 获取级联数据和表格数据
+    data() {
+    return {
+      cateList: [], //商品分类数据列表
+      selectedCateKeys: [], //选中的商品分类id数组
+      cateProps: {
+        //级联选择器的配置对象
+        expandTrigger: 'hover', //鼠标移入展开
+        value: 'cat_id', //选中的值的id
+        label: 'cat_name', //选中的值的名称
+        children: 'children', //父子嵌套用的哪个属性
+      },
+
+      activeName: 'many', //tab选中的数据  双向数据绑定
+      manyTableList: [], //动态参数数据列表
+      onlyTableList: [], //静态属性数据列表
+    }
+  },
+
+    <el-button type="primary" size="mini" :disabled="isDisable">动态参数</el-button>
+    //用计算属性来计算根据级联文本框数组的长度来判断按钮是否禁用显示 --禁用返回false 显示返回true
+    computed: {
+        isDisable() {
+        if (this.selectedCateKeys.length === 3) {
+            return false
+        }
+        return true
+        },
+
+        // 计算当前选中的三级分类的id
+        cateId() {
+        if (this.selectedCateKeys.length === 3) {
+            return this.selectedCateKeys[2]
+        }
+        return null
+        },
+    },
+    methods：
+    const { data: res } = await this.$http.get(`categories/${this.cateId}/attributes`,{ params: { sel: this.activeName } })
+    if (res.meta.status !== 200)
+    return this.$mess.error('获取表格数据参数列表失败')
+
+    // 获取数据成功，判断是动态参数还是静态属性
+    if (this.activeName === 'only') {
+    this.onlyTableList = res.data
+    } else {
+    this.manyTableList = res.data
+    }
+### 添加属性按钮：共用一个对话框
+    data：
+    //添加参数对话框的显示与隐藏
+      addDialogVisible: false,
+      addForm: {
+        //添加表单的数据对象
+        attr_name: '', //参数名称
+      },
+      addFormRules: {
+        //添加表单的验证规则对象
+        attr_name: [{ required: true, message: '请输入名称', trigger: 'blur' }],
+      },
+
+    <!-- 添加参数对话框 title使用计算属性来计算-->
+    <el-dialog
+    :title="'添加' + this.addTitleText"
+    :visible.sync="addDialogVisible"
+    width="50%"
+    @close="addDialogClose"
+    >
+
+    computed：{....
+        // 计算添加按钮的文本信息title
+        addTitleText() {
+        if (this.activeName == 'only') {
+            return '静态属性'
+        }
+        return '动态参数'
+        },
+    }
+    methods：
+    // 点击确定按钮添加参数到后台
+    addParams() {
+      // 表单预验证
+      this.$refs.addFormRef.validate(async (valide) => {
+        if (!valide) return
+
+        const { data: res } = await this.$http.post(
+          `categories/${this.cateId}/attributes`,
+          { attr_name: this.addForm.attr_name, attr_sel: this.activeName }
+        )
+        if (res.meta.status !== 201) return this.$mess.error('添加参数失败')
+        this.$mess.success('添加参数成功')
+        // 刷新表格数据
+        this.getTableList()
+        // 关闭对话框
+        this.addDialogVisible = false
+      })
+    },
+    // 监听添加参数对话框的关闭事件 重置表单
+    addDialogClose() {
+      this.$refs.addFormRef.resetFields()
+    },
+### 修改参数功能：编辑按钮  两个tabs里面都要加上
+    <el-button type="primary" icon="el-icon-edit" plain size="mini"
+    @click="openEidtDialog(scope.row.attr_id)">编辑</el-button>
+
+    data:
+    //   编辑参数随想的显示与隐藏
+    editDialogVisible:false,
+    editForm:{//编辑参数表单的参数对象
+        attr_name:'',
+        attr_id:'',
+    },
+    editFormRules:{//编辑参数表单的验证规则对象
+        attr_name: [{ required: true, message: '请输入参数名称', trigger: 'blur' }],
+    },
+    
+    <!-- 编辑参数对话框-->
+    <el-dialog
+    :title="'修改' + this.addTitleText"
+    :visible.sync="editDialogVisible"
+    width="50%"
+    @close="editDialogClose"
+    >
+    <el-form :model="editForm" :rules="editFormRules" ref="editFormRef">
+        <el-form-item :label="addTitleText" prop="attr_name">
+        <el-input v-model="editForm.attr_name"></el-input>
+        </el-form-item>
+    </el-form>
+    <span slot="footer">
+        <el-button @click="editDialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="editParams">确 定</el-button>
+    </span>
+    </el-dialog>
+
+    methods:
+     // 点击编辑根据id查询当前参数的信息  打开编辑参数的对话框
+    async openEidtDialog(attr_id){
+        // 根据id查询当前参数的信息
+        const {data:res} = await this.$http.get(`categories/${this.cateId}/attributes/${attr_id}`,{params:{attr_sel:this.activeName}})
+        if(res.meta.status!==200) return this.$mess.errer('获取参数信息失败') 
+
+        // 将获取到的参数信息保存到editForm对象
+        this.editForm = res.data
+        this.editDialogVisible = true
+    },
+    // 点击确定修改参数保存到后台
+    async editParams(){
+        // 表单预验证
+      this.$refs.editFormRef.validate(async (valide) => {
+        if (!valide) return
+        const {data:res} = await this.$http.put(`categories/${this.cateId}/attributes/${this.editForm.attr_id}`,{
+            attr_name:this.editForm.attr_name,attr_sel:this.activeName
+        })
+        if(res.meta.status!==200) return this.$mess.error('修改参数名称失败') 
+
+        // 刷新表格数据
+        this.getTableList()
+        this.$mess.success('修改参数名称成功') 
+        this.editDialogVisible = false
+      })
+    },
+### 删除参数功能
+    <el-button type="danger" icon="el-icon-delete" plain size="mini" @click="removeParams(scope.row.attr_id)">删除</el-button>
+
+    // 根据id删除参数
+    async removeParams(attr_id){
+        const confirmResult = await this.$confirm(
+        '是否确定删除此参数？','提示',{
+          confirmButtonText:'确定',
+          cancelButtonText:'取消',
+          type: 'warning'
+      }).catch(err => err)  
+
+      // 如果用户点击确认，返回字符串 confirm，取消，返回字符串 cancel
+      if(confirmResult !== 'confirm') return this.$mess.info('已取消删除.')
+      const {data:res} = await this.$http.delete(`categories/${this.cateId}/attributes/${attr_id}`)
+      if(res.meta.status!==200) return this.$mess.error('删除参数失败！')
+        // 刷新参数列表
+        this.getTableList()
+        this.$mess.success('删除参数成功！')
+    }
+### 参数下的可选项功能
+#### 获取可选项数据attr_vals 是个字符串，将字符串以空格形式循环分割为数组
+    getTableList(){
+        ...
+        res.data.forEach(item => {
+            item.attr_vals = item.attr_vals ? item.attr_vals.split(' ') : []
+        });
+        ...
+    }
+    
+    <!-- 展开列 -->
+    <el-table-column type="expand">
+        <template slot-scope="scope">
+            <el-tag closable v-for="(item,i) in scope.row.attr_vals" :key="i">
+                {{item}}
+            </el-tag>
+        </template>
+    </el-table-column>
+    <!-- 索引列 -->.....
+#### element动态编辑标签 +new tag
+    <!-- 展开列 -->
+    <el-table-column type="expand">
+        <template slot-scope="scope">
+        <!-- 循环渲染tag标签 -->
+        <el-tag
+            closable        所有数据都在scope中，直接从scope中取attr_vals
+            v-for="(item, i) in scope.row.attr_vals"
+            :key="i"
+        >
+            {{ item }}
+        </el-tag>
+        <!-- 输入的文本框 -->
+        <el-input
+            class="input-new-tag"
+            v-if="scope.row.inputVisible"
+            v-model="scope.row.inputValue"
+            ref="saveTagInput"
+            size="small"
+            @keyup.enter.native="handleInputConfirm(scope.row)"
+            @blur="handleInputConfirm(scope.row)"
+        >
+        </el-input>
+        <!-- 添加按钮 -->
+        <el-button
+            v-else
+            class="button-new-tag"
+            size="small"
+            @click="showInput(scope.row)"
+            >+ New Tag</el-button
+        >
+        </template>
+    </el-table-column>
+
+    // 按下键盘的 enter 或者鼠标失去焦点都会触发
+    async handleInputConfirm(row){
+        // 如果文本框没有值，就清空文本框，并隐藏文本框
+        if(row.inputValue.trim().length===0){
+            row.inputValue = ''
+            row.inputVisible = false
+            return
+        }
+
+        // 如果有值，先保存到数据中
+        row.attr_vals.push(row.inputValue.trim())
+        // 吧文本框请空
+        row.inputValue = ''
+        // 关闭文本框
+        row.inputVisible = false
+
+        // 再发起请求保存到后台
+      this.saveAttrVals(row)
+        
+    },
+    // 对attr_vals的操作，保存到后台数据库
+    async saveAttrVals(row) {
+      const { data: res } = await this.$http.put(
+        `categories/${this.cateId}/attributes/${row.attr_id}`,
+        {
+          attr_name: row.attr_name,
+          attr_sel: row.attr_sel,
+          attr_vals: row.attr_vals.join(' '),
+        }
+      )
+      if (res.meta.status !== 200) return this.$mess.error('更新参数项失败！')
+
+      this.$mess.success('更新参数项成功！')
+    },
+    // 点击添加tag按钮打开input输入框
+    showInput(row){
+        row.inputVisible = true
+        // $nextTick:当页面上的元素被重新渲染之后,才会执行函数中的代码
+        this.$nextTick(()=> {
+        // 让input框自动获得焦点
+          this.$refs.saveTagInput.$refs.input.focus()
+        });
+    }
+#### 删除标签
+     <el-tag
+        closable
+        v-for="(item, i) in scope.row.attr_vals"
+        :key="i"
+        @close="removeTag(i, scope.row)"
+    >
+
+    // 删除tag标签
+    removeTag(i, row) {
+      row.attr_vals.splice(i, 1)
+    //   刷新参数项
+      this.saveAttrVals(row)
+    },
+
+    // 获取表格数据列表 参数：选中的三级分类id   tabs选项卡选中的值
+    async getTableList() {
+      //   判断选中的值的长度来决定是否展示在文本框  只有三级分类才可以展示
+      if (this.selectedCateKeys.length !== 3) {
+        this.selectedCateKeys = []
+        // 清空表格数据.
+        this.onlyTableList = []
+        this.manyTableList = []
+        this.$mess.info('请选择三级分类！')
+        return
+      }
+      ......
+    }
+#### 动态个静态的tab中的结构渲染一致，逻辑写一遍就好了
+### 分类参数功能上传到github
+    git branch
+    git add .
+    git commit -m "完成分类参数功能"
+    git push
+    git checkout master
+    git merge goods_params
+    git push
