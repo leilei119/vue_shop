@@ -113,6 +113,17 @@
     //使用： // 预验证痛过之后发起登录请求 返回promis用await async修饰
     const { data:res } = await this.$http.post('login',this.loginForm)
 
+
+    /*如果请求接口参数是对象，访问方式是get 参数名：params*/
+    data：// 查询条件   --接口需要的参数
+        queryInfo:{
+            type:3,
+            pagenum:1,//当前页码值
+            pagesize:5,//每页显示多少条数据
+        },
+    methods:const {data:res} = await this.$http.get('categories',{params:this.queryInfo})
+
+
     if(res.meta.status !== 200) return this.$mes.error('登陆失败！')
     this.$mes.success( '登陆成功!')
 
@@ -530,7 +541,7 @@
     git push              吧本地master提交到云端进行保存（已经有master  就不需要加后面的-u ）
 
 ## 权限管理功能开发
-    新的功能开始 创建个新的分支
+    新的功能开始 创建个新的分支 并切换到新分支上
     git checkout -b rights
     吧本地的分支rights推送到云端进行保存（第一次推送）
     git push -u origin rights
@@ -742,9 +753,195 @@
     git add .                               所有修改过得文件添加到暂存区
     git commit -m "完成了权限功能的开发"      将代码提交到rights分支
     git push                                吧本地rights分支push到github的rights分支中，不需要加-u因为云端已经有了rights分支
-    git checkout                            切换到主分支
+    git checkout master                     切换到主分支
     git merge rights                        吧本地rights分支中的代码合并到本地master主分支
     git push                                再把本地master推送到github的master中进行保存
 
+## 商品管理-商品分类功能开发
+    新的功能开始 创建个新的分支 并切换到新分支上
+    git checkout -b goods_cate
+    吧本地的分支rights推送到云端进行保存（第一次推送）
+    git push -u origin goods_cate
+### 渲染树形表格
+#### 依赖第三方插件：（这个的索引值只有一级有）
+    安装插件：npm i vue-table-with-tree-grid -S
+    main.js中：
+        import TreeTable from 'vue-table-with-tree-grid'
+        Vue.use(TreeTable)
+        or
+        Vue.component('tree-table',TreeTable)//注册为全局可复用的组件
+    data：....
+        //为table指定列的定义
+        columns:[
+            {
+                label:'分类名称',
+                prop:'cat_name'
+            },
+            {
+                label:'是否有效',
+                type:'template',//将当前列定义为模板列
+                template:'isok'//当前这一列使用的模板名称
+            },
+            {
+                label:'排序',
+                type:'template',//将当前列定义为模板列
+                template:'order'//当前这一列使用的模板名称
+            },
+            {
+                label:'操作',
+                type:'template',//将当前列定义为模板列
+                template:'opt'//当前这一列使用的模板名称
+            },
+        ]
+    .vue中：expand-type取消复选框  show-index 添加索引列 索引列名自定义
+        <tree-table class="treetable" :data="cateList" :columns="columns" :selection-type="false" :expand-type="false" :show-index="true" index-text="#">
+        <!-- 是否有效 -->
+        <template slot="isok" slot-scope="scope">
+            <i class="el-icon-success" v-if="scope.row.cat_deleted===false" style="color:lightgreen;"></i>
+            <i class="el-icon-error" v-else style="color:red;"></i>
+        </template>
 
+        <!-- 排序 -->
+        <template slot="order" slot-scope="scope">
+            <el-tag size="mini" v-if="scope.row.cat_level ===0">一级</el-tag>
+            <el-tag type="success" size="mini" v-else-if="scope.row.cat_level ===1">二级</el-tag>
+            <el-tag type="warning" size="mini" v-else>三级</el-tag>
+        </template>
+
+        <!-- 操作 -->
+        <template slot="opt" slot-scope="scope">
+            <el-button type="primary" icon="el-icon-edit" plain size="mini"
+              >编辑</el-button
+            >
+            <el-button type="danger" icon="el-icon-delete" plain size="mini"
+              >删除</el-button
+            >
+        </template>
+    </tree-table>
+    
+#### element树形表格（这个索引值所有的都有，排序乱）
+     <!-- 表格区域 -->
+      <el-table
+        :data="cateList"
+        row-key="cat_id"    
+        border
+        :tree-props="{ children: 'children' }"  cateList中包含children字段时，被视为树形数据
+      >
+        <el-table-column prop="cat_name" label="分类名称" sortable>
+        </el-table-column>
+        <el-table-column prop="cat_deleted" label="是否有效" sortable>
+        </el-table-column>
+        <el-table-column prop="cat_level" sortable label="排序">
+        </el-table-column>
+        <el-table-column label="操作" width="300px">
+          <template slot-scope="scope">
+            <el-button type="primary" icon="el-icon-edit" plain size="mini"
+              >编辑</el-button
+            >
+            <el-button type="danger" icon="el-icon-delete" plain size="mini"
+              >删除</el-button
+            >
+          </template>
+        </el-table-column>
+      </el-table>
+### 添加分类功能
+    element级联选择器 cascader
+    <!-- 级联选择器 options用来指定数据源 props用来指定配置对象-->
+    <el-cascader
+    :options="parentCateList"
+    v-model="selectedKeys"
+    :props="cateCaderProps"
+    clearable
+    size="medium"
+    @change="parentCateChanged"></el-cascader>
+
+
+    //   添加分类对话框的显示与隐藏
+    addCateDialogVisible:false,
+    addCateForm:{//添加分类的表单数据对象
+        cat_name:'',//将要添加的分类名称
+        cat_pid:0,//父级分类的id
+        cat_level:0//分类的等级，默认要添加的是一级分类
+    },
+    addCateFormRules:{//添加分类表单的验证规则对象
+        cat_name:[
+            {required:true,message:'请输入分类名称',trigger:'blur'}
+        ]
+    },
+    parentCateList:[],//父级分类的列表  展示在级联下拉的文本
+    selectedKeys:[],//选中的父级分类的id数组
+    cateCaderProps:{//指定级联选择器的配置对象
+        expandTrigger: 'hover',//鼠标移入展开
+        value:'cat_id',//选中的值的id
+        label:'cat_name',//选中的值的名称
+        children:'children'//父子嵌套用的哪个属性
+    },
+
+    
+        this.getParentCateList()
+        this.addCateDialogVisible = true
+    },
+    // 获取父级分类的数据列表
+    async getParentCateList(){
+        const {data:res} = await this.$http.get('categories',{params:{type:2}})
+        if(res.meta.status!==200) return this.$mess.error('获取父级分类列表成功')
+
+        this.parentCateList = res.data
+    },
+    // 选择项的值发生变化触发这个函数
+    parentCateChanged(){
+      
+      console.log(this.selectedKeys);
+      // 如果selectedKeys数组中的length大于0 证明选中了父级分类
+      if(this.selectedKeys.length>0){
+        // 为父级分类id赋值： 获取最后一项父级id，不管是一级还是二级父id  都以最后一项的id为准
+        this.addCateForm.cat_pid = this.selectedKeys[this.selectedKeys.length-1]
+        // 为当前分类的等级赋值:等级就是选中数组的长度 0 1 2一共三个等级
+        this.addCateForm.cat_level = this.selectedKeys.length
+        return
+      }else{
+        // 反之 没有选中任何父级分类 为父级分类id赋值v
+        this.addCateForm.cat_pid = 0
+        // 为当前分类的等级赋值
+        this.addCateForm.cat_level = 0
+      }
+
+    },
+    // 点击确定添加新增加的分类到后台
+    addCate(){
+      // 表单预验证
+      this.$refs.addCateFormRef.validate(async valid=>{
+        if(!valid) return
+
+        const {data:res} = await this.$http.post('categories',this.addCateForm)
+
+        if(res.meta.status!==201) return this.$mess.error('保存分类失败！')
+
+        this.$mess.success('保存分类成功！')
+        // 刷新分类列表
+        this.getCateList()
+        // 关闭对话框
+        this.addCateDialogVisible = false
+      })
+      console.log(this.addCateForm);
+    },
+    // 监听关闭对话框的事件 重置表单数据
+    addCateDialogClosed(){
+        this.$refs.addCateFormRef.resetFields()
+        this.selectedKeys = []
+        this.addCateForm.cat_pid = 0
+        this.addCateForm.cat_level = 0
+    },
+### git：吧添加分类的代码上传
+    git branch
+    git status
+    git add .
+    git status
+    git commit -m "完成了分类功能的开发"
+    git push
+    git branch
+    git checkout master
+    git merge goods_cate
+    git push
+    
 

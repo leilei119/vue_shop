@@ -3,8 +3,9 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from './router' //引入router.js
 import './assets/css/global.css' // 导入全局样式表
-import { Select,Option,Tree,Tag,Dialog, Form, FormItem, Input, Button, Message, Container, Header, Aside, Main, Menu, Submenu, MenuItem, Breadcrumb, BreadcrumbItem, Card, Row, Col, Table, TableColumn, Switch, Tooltip ,Pagination,MessageBox} from 'element-ui'
+import { Cascader, Select, Option, Tree, Tag, Dialog, Form, FormItem, Input, Button, Message, Container, Header, Aside, Main, Menu, Submenu, MenuItem, Breadcrumb, BreadcrumbItem, Card, Row, Col, Table, TableColumn, Switch, Tooltip, Pagination, MessageBox } from 'element-ui'
 import axios from 'axios'
+import TreeTable from 'vue-table-with-tree-grid'
 
 Vue.use(Form)
 Vue.use(FormItem)
@@ -33,10 +34,12 @@ Vue.use(Tag)
 Vue.use(Tree)
 Vue.use(Select)
 Vue.use(Option)
-
+Vue.use(Cascader)
 
 Vue.prototype.$mess = Message//全局配置Message 将Message组件挂载到vue的原型对象上
 Vue.prototype.$confirm = MessageBox.confirm//全局配置MessageBox 将MessageBox组件挂载到vue的原型对象上
+
+Vue.component('tree-table', TreeTable)//注册为全局可复用的组件
 
 
 // 配置请求的根路径

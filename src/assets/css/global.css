@@ -313,6 +313,7 @@ textarea {
 .el-table{
     border-radius: 10px;
     font-size: 12px;
+    margin-top: 15px;
 }
 .el-table thead.is-group th.el-table__cell {
     background: #eff8fa;
@@ -347,4 +348,8 @@ textarea {
     color: #606266;
     cursor: text;
     font-weight: inherit;
+}
+
+.el-cascader-panel {
+    height: 300px;
 }
