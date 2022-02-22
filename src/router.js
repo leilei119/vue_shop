@@ -8,7 +8,8 @@ import Rights from './components/home/power/Rights.vue'
 import Roles from './components/home/power/Roles.vue'
 import Cate from './components/goods/Cate.vue'
 import Params from './components/goods/Params.vue'
-import Goods from './components/goods/Goods.vue'
+import List from './components/goods/List.vue'
+import AddGoodsList from './components/goods/AddGoodsList.vue'
 
 Vue.use(Router)
 
@@ -52,29 +53,34 @@ const router = new Router({
                     component: Users
                 },
                 {// 权限列表
-                    name:'rightslist',
-                    path:'/rights',
-                    component:Rights
+                    name: 'rightslist',
+                    path: '/rights',
+                    component: Rights
                 },
                 {// 角色列表
-                    name:'roleslist',
-                    path:'/roles',
-                    component:Roles
+                    name: 'roleslist',
+                    path: '/roles',
+                    component: Roles
                 },
                 {// 商品分类
-                    name:'goodsCate',
-                    path:'/categories',
-                    component:Cate
+                    name: 'goodsCate',
+                    path: '/categories',
+                    component: Cate
                 },
                 {// 分类参数
-                    name:'cateParam',
-                    path:'/params',
-                    component:Params
+                    name: 'cateParam',
+                    path: '/params',
+                    component: Params
                 },
                 {// 商品列表
-                    name:'goodList',
-                    path:'/goods',
-                    component:Goods
+                    name: 'goodList',
+                    path: '/goods',
+                    component: List,
+                },
+                {
+                    name: 'addgood',
+                    path: '/goods/add',
+                    component: AddGoodsList
                 }
             ]
         }

@@ -3,9 +3,14 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from './router' //引入router.js
 import './assets/css/global.css' // 导入全局样式表
-import { Tabs,TabPane, Alert,Cascader, Select, Option, Tree, Tag, Dialog, Form, FormItem, Input, Button, Message, Container, Header, Aside, Main, Menu, Submenu, MenuItem, Breadcrumb, BreadcrumbItem, Card, Row, Col, Table, TableColumn, Switch, Tooltip, Pagination, MessageBox } from 'element-ui'
+import { Upload, CheckboxGroup,Checkbox,Steps,Step,Tabs,TabPane, Alert,Cascader, Select, Option, Tree, Tag, Dialog, Form, FormItem, Input, Button, Message, Container, Header, Aside, Main, Menu, Submenu, MenuItem, Breadcrumb, BreadcrumbItem, Card, Row, Col, Table, TableColumn, Switch, Tooltip, Pagination, MessageBox } from 'element-ui'
 import axios from 'axios'
 import TreeTable from 'vue-table-with-tree-grid'
+import VueQuillEditor from 'vue-quill-editor' // 导入富文本编辑器
+// 导入富文本编辑器对应的样式
+import 'quill/dist/quill.core.css'
+import 'quill/dist/quill.snow.css'
+import 'quill/dist/quill.bubble.css'
 
 Vue.use(Form)
 Vue.use(FormItem)
@@ -38,12 +43,18 @@ Vue.use(Cascader)
 Vue.use(Alert)
 Vue.use(Tabs)
 Vue.use(TabPane)
+Vue.use(Steps)
+Vue.use(Step)
+Vue.use(CheckboxGroup)
+Vue.use(Checkbox)
+Vue.use(Upload)
 
 
 Vue.prototype.$mess = Message//全局配置Message 将Message组件挂载到vue的原型对象上
 Vue.prototype.$confirm = MessageBox.confirm//全局配置MessageBox 将MessageBox组件挂载到vue的原型对象上
 
-Vue.component('tree-table', TreeTable)//注册为全局可复用的组件
+Vue.component('tree-table', TreeTable)//将树形表格插件注册为全局可复用的组件
+Vue.use(VueQuillEditor)//将富文本编辑器插件注册为全局组件
 
 
 // 配置请求的根路径
@@ -60,6 +71,22 @@ Vue.prototype.$http = axios
 
 
 Vue.config.productionTip = false
+
+
+// 全局过滤器  ：格式化时间 daraFormat过滤器名字 originVal要处理的时间数据  过滤器函数
+Vue.filter('dataFormat',function(originVal){
+  const dt = new Date(originVal)
+
+  const y =dt.getFullYear()
+  const m =(dt.getMonth() + 1 + '').padStart(2,'0')
+  const d =(dt.getDate()  + '').padStart(2,'0')
+
+  const hh =(dt.getHours()  + '').padStart(2,'0')
+  const mm =(dt.getMinutes()  + '').padStart(2,'0')
+  const ss =(dt.getSeconds()  + '').padStart(2,'0')
+
+  return `${y}-${m}-${d} ${hh}:${mm}:${ss}`
+})
 
 
 new Vue({

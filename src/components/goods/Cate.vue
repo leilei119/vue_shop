@@ -253,8 +253,6 @@ export default {
     },
     // 选择项的值发生变化触发这个函数
     parentCateChanged(){
-      
-      console.log(this.selectedKeys);
       // 如果selectedKeys数组中的length大于0 证明选中了父级分类
       if(this.selectedKeys.length>0){
         // 为父级分类id赋值： 获取最后一项父级id，不管是一级还是二级父id  都以最后一项的id为准
