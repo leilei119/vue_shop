@@ -102,7 +102,6 @@ export default {
       if (res.meta.status !== 200) return this.$mess.error('获取商品列表失败。')
         this.goodsList = res.data.goods
         this.total = res.data.total
-        console.log(res.data);
     },
     // 切换每页显示的条数
     handleSizeChange(newvpagesize){

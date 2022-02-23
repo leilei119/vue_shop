@@ -312,7 +312,6 @@ export default {
         // 文本框中输入的值
         item.inputValue = ''
       })
-      console.log(res.data)
 
       // 获取数据成功，判断是动态参数还是静态属性
       if (this.activeName === 'only') {

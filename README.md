@@ -1,6 +1,7 @@
 # vue_shop
     可以cmd 命令创建
     也可以用可视化面板创建： vue ui
+# git下载项目
 ## 存在跨域问题使用token，不存在跨域使用cookie和session  来维持登录状态
 
 ## 格式化和eslint与法冲突
@@ -253,7 +254,7 @@
     //全局配置axios  将ajax挂载到vue的原型对象上
     Vue.prototype.$http = axios
 
-#  用户列表
+# 用户列表
 ## 查询用户列表
 ### 请求接口时如果有多个参数要求，可以写成一个参数对象
     data() {
@@ -1506,3 +1507,58 @@
     git checkout master
     git merge goods_list
     git push
+
+# 订单管理
+    创建新分支
+    git checkout -b order
+    吧本地的分支rights推送到云端进行保存（第一次推送）
+    git push -u origin order
+## 订单列表：物流进度查询 时间线
+    <!-- 物流进度信息对话框 -->
+      <el-dialog
+        width="50%"
+        title="物流进度信息"
+        :visible.sync="progressDialogVisible"
+      >
+        <!-- 时间线 Timeline reverse指定节点排序方向，默认为正序
+         timestamp	时间戳-->
+        <el-timeline :reverse="true">
+          <el-timeline-item
+            v-for="(activity, index) in progressList"
+            :key="index"
+            :timestamp="activity.time"
+            :icon="activity.icon"
+            :type="activity.type"
+            :color="activity.color"
+            :size="activity.size"
+          >
+            {{ activity.context }}
+          </el-timeline-item>
+        </el-timeline>
+      </el-dialog>
+      
+      progressDialogVisible: false, //物流信息的展示与隐藏
+      progressList: [], //物流进度信息数据
+
+      // 点击查询物流进度信息
+    async showProgressBox() {
+      // 查询物流信息的接口
+       const { data: res } = await this.$http.get('/kuaidi/804909574412544580')
+
+       if (res.meta.status !== 200) {
+         return this.$message.error('获取物流进度失败！')
+      }
+       console.log(res)
+      this.progressList = res.data
+      this.progressDialogVisible = true
+    },
+## 订单管理代码上传github
+    git branch
+    git status
+    git add .
+    git commit -m "完成商品列表功能"
+    git push
+    git checkout master
+    git merge order
+    git push
+

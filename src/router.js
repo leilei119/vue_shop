@@ -6,10 +6,11 @@ import Welcome from './components/home/welcome.vue'
 import Users from './components/home/user/users.vue'
 import Rights from './components/home/power/Rights.vue'
 import Roles from './components/home/power/Roles.vue'
-import Cate from './components/goods/Cate.vue'
-import Params from './components/goods/Params.vue'
-import List from './components/goods/List.vue'
-import AddGoodsList from './components/goods/AddGoodsList.vue'
+import Cate from './components/home/goods/Cate.vue'
+import Params from './components/home/goods/Params.vue'
+import List from './components/home/goods/List.vue'
+import AddGoodsList from './components/home/goods/AddGoodsList.vue'
+import Order from './components/home/orders/Order.vue'
 
 Vue.use(Router)
 
@@ -77,10 +78,15 @@ const router = new Router({
                     path: '/goods',
                     component: List,
                 },
-                {
+                {// 添加商品
                     name: 'addgood',
                     path: '/goods/add',
                     component: AddGoodsList
+                },
+                {
+                    name:'orderlist',
+                    path:'/orders',
+                    component:Order
                 }
             ]
         }
