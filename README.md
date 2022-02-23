@@ -1556,9 +1556,110 @@
     git branch
     git status
     git add .
-    git commit -m "完成商品列表功能"
+    git commit -m "完成订单管理能"
     git push
     git checkout master
     git merge order
     git push
 
+# 数据报表功能
+## echarts普通用法
+    echarts:npm install echarts --save
+            5.0以上的版本会报错 要卸载了安装4.1.0的版本
+            npm uninstall echarts
+            npm install echarts@4.1.0 --save
+    全局使用，可以在main.js引入
+            Vue.prototype.$echarts = echarts//全局配置echarts 将echarts组件挂载到vue的原型对象上
+    组件中：
+        <!-- 卡片区域 -->
+        <el-card shadow="always">
+        <!-- 为echarts准备一个具有高度的dom -->
+        <div id="main" style="height: 400px"></div>
+        </el-card>
+
+        //此时，页面上的元素，已经被渲染完毕了
+        async mounted() {
+            // 基于准备好的dom，初始化echarts实例
+            var myChart = this.$echarts.init(document.getElementById('main'))
+
+            // 获取数据报表数据  // 指定图表的配置项和数据
+            const { data: res } = await this.$http.get('reports/type/1')
+            if (res.meta.status !== 200) return this.$mess.error('获取图表数据失败')
+
+            // 使用刚指定的配置项和数据显示图表。
+            myChart.setOption(res.data)
+        },
+## echarts合并数据
+    echarts:npm install echarts --save
+            5.0以上的版本会报错 要卸载了安装4.1.0的版本
+            npm uninstall echarts
+            npm install echarts@4.1.0 --save
+    全局使用，可以在main.js引入
+            Vue.prototype.$echarts = echarts//全局配置echarts 将echarts组件挂载到vue的原型对象上
+    组件中：
+        <!-- 卡片区域 -->
+        <el-card shadow="always">
+        <!-- 为echarts准备一个具有高度的dom -->
+        <div id="main" style="height: 400px"></div>
+        </el-card>
+
+        data() {
+            return {
+            // 需要合并的数据：api接口中提供的
+            options: {
+                title: {
+                text: '用户来源',
+                },
+                tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'cross',
+                    label: {
+                    backgroundColor: '#E9EEF3',
+                    },
+                },
+                },
+                grid: {
+                left: '3%',
+                right: '4%',
+                bottom: '3%',
+                containLabel: true,
+                },
+                xAxis: [
+                {
+                    boundaryGap: false,
+                },
+                ],
+                yAxis: [
+                {
+                    type: 'value',
+                },
+                ],
+            },
+            }
+        },
+        
+        //此时，页面上的元素，已经被渲染完毕了
+        async mounted() {
+            // 基于准备好的dom，初始化echarts实例
+            var myChart = this.$echarts.init(document.getElementById('main'))
+
+            // 获取数据报表数据  // 指定图表的配置项和数据
+            const { data: res } = await this.$http.get('reports/type/1')
+            if (res.meta.status !== 200) return this.$mess.error('获取图表数据失败')
+
+            //   准备数据和配置项  合并数据
+            const result = _.merge(res.data, this.options)
+
+            // 使用刚指定的配置项和数据显示图表。
+            myChart.setOption(result)
+        },
+## 数据报表代码上传github
+    git branch
+    git status
+    git add .
+    git commit -m "完成数据报表功能"
+    git push
+    git checkout master
+    git merge report
+    git push

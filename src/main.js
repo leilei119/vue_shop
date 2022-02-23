@@ -11,6 +11,7 @@ import VueQuillEditor from 'vue-quill-editor' // 导入富文本编辑器
 import 'quill/dist/quill.core.css'
 import 'quill/dist/quill.snow.css'
 import 'quill/dist/quill.bubble.css'
+import echarts from 'echarts'
 
 Vue.use(Form)
 Vue.use(FormItem)
@@ -54,9 +55,11 @@ Vue.use(Timeline)
 
 Vue.prototype.$mess = Message//全局配置Message 将Message组件挂载到vue的原型对象上
 Vue.prototype.$confirm = MessageBox.confirm//全局配置MessageBox 将MessageBox组件挂载到vue的原型对象上
+Vue.prototype.$echarts = echarts//全局配置echarts 将echarts组件挂载到vue的原型对象上
 
 Vue.component('tree-table', TreeTable)//将树形表格插件注册为全局可复用的组件
 Vue.use(VueQuillEditor)//将富文本编辑器插件注册为全局组件
+
 
 
 // 配置请求的根路径
