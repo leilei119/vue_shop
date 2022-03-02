@@ -73,8 +73,8 @@
           <el-form-item label="价格" prop="goods_price">
             <el-input type="number" v-model="editForm.goods_price"></el-input>
           </el-form-item>
-          <el-form-item label="数量" prop="goods_name">
-            <el-input type="number" v-model="editForm.goods_name"></el-input>
+          <el-form-item label="数量" prop="goods_number">
+            <el-input type="number" v-model="editForm.goods_number"></el-input>
           </el-form-item>
           <el-form-item label="重量" prop="goods_weight">
             <el-input type="number" v-model="editForm.goods_weight"></el-input>
