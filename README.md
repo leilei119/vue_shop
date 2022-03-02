@@ -1663,3 +1663,430 @@
     git checkout master
     git merge report
     git push
+
+
+
+
+# 添加进度条
+    下载插件：
+        npm install --save nprogress
+    main.js导入nprogress包的js css 进度条
+        import NProgress from 'nprogress'
+        import 'nprogress/nprogress.css'    
+
+        // 设置拦截器,为请求头中的Authorization字段添加token   之后每次请求数据时看这个字段中是否有token就知道是否有权限查看了
+        // 在request请求拦截器中展示进度条 NProgress.start()
+        axios.interceptors.request.use(config => {
+            NProgress.start()
+            config.headers.Authorization = window.sessionStorage.getItem('token')
+            // 在最后必须return config
+            return config
+        })
+
+        // 在response响应拦截器中隐藏进度条NProgress.done()
+        axios.interceptors.response.use(config=>{
+            console.log('config',config);
+            NProgress.done()
+            // 在最后必须return config
+            return config
+        })
+
+# 优化项目
+## .prettierrc文件中：格式化文件
+    {
+        "semi":false,
+        "singleQuote":true,
+        "printWidth":200 //格式化的时候 一行最多允许多少个字符 
+    }
+
+## 运行vue ui面板 运行serve  看有没有警告，解决警告
+
+## 运行build  看有没有警告，解决警告  ---生成dist目录，用于生产环境项目的发布
+### 解决console.log：在开发阶段可以console.log  在打包阶段的时候不能运行console.log命令
+    下载插件：npm install babel-plugin-transform-remove-console --save-dev
+    （或者再面板中点击安装开发依赖：babel-plugin-transform-remove-console）
+
+    babel.config.js文件中：
+        //  这是项目发布阶段需要用到的babel插件 
+        const prodPlugins = []
+        if(process.env.NODE_ENV ==='production'){
+            // 如果是发布阶段就把发布阶段需要的插件放进数组 
+            prodPlugins.push('transform-remove-console')
+        }
+        module.exports = {
+        presets: [
+            '@vue/cli-plugin-babel/preset',
+            ["@babel/preset-env", { "modules": false }]
+        ],
+        plugins: [
+            [
+            "component",
+            {
+            "libraryName": "element-ui",
+            "styleLibraryName": "theme-chalk"
+            }
+            ],
+            // 发布产品时候的插件数组 展开运算符
+            ...prodPlugins   
+        ]
+        }
+
+
+## 自定义webpack的默认配置
+    再项目根目录中，创建vue.config.js这个配置文件，对项目的打包发布过程做自定义的配置
+    配置参考地址：https://cli.vuejs.org/zh/config/#vue-config-js
+
+## 生成打包报告
+    --report 选项可以生成report.html以帮助分析包内容
+### 1.命令生成：vue-cli-service build --report
+### 2.可视化面板直接查看：任务-build-运行 可以打包项目也可以生成报告
+    通过控制台和分析面板，可以直接看到项目中存在的问题，控制台  分析 都可以看到
+
+## 为开发模式和发布模式指定不同的打包入口
+    默认情况，vue项目的开发和发布模式。共用一个打包入口（src/main.js）
+    为了将项目的开发过程和发布过程分离，我们可以分为两种模式。
+    各自指定打包的入口文件：
+        1.开发模式的入口文件：src/main-dev.js
+        2.发布模式的入口文件：src/main-prod.js
+    
+    和main.js平级新建main-prod.js（发布上线环境默认入口）
+    将main.js改名为main-dev.js （开发环境默认入口） 复制全部内容到新建的main-prod.js中
+
+### configureWebpack和chainWebpack
+    再vue.config.js导出的配置对象中，新增configureWebpack 或 chainWebpack节点来自定义webpack的打包配置
+
+    configureWebpack和chainWebpack的作用相同，只有配置的方式不同
+    1.configureWebpack通过操作对象的形式来修改默认的webpack配置
+    2.chainWebpack通过链式编程的形式来修改默认的webpack配置
+    具体使用差异：https://cli.vuejs.org/zh/guide/webpack.html
+
+
+### vue.config.js文件：
+    module.exports = {
+        lintOnSave: false,//关闭eslint
+        chainWebpack:config=>{
+            // when判断当前处于什么编译模式：production就执行回调函数  entry得到默认打包入口文件，再清空入口文件，再追加自己的打包入口文件
+            // 发布上线模式
+            config.when(process.env.NODE_ENV === 'production',config=>{
+                config.entry('app').clear().add('./src/main-prod.js')
+            })
+            // 开发模式
+            config.when(process.env.NODE_ENV === 'development',config=>{
+                config.entry('app').clear().add('./src/main-dev.js')
+            })
+        }
+    }
+
+## 第三方库启用CDN
+### 通过externals加载外部CDN资源
+    默认情况下，通过import语法导入的第三方依赖包，最终会被打包合并到同一个文件中，从而导致打包成功后，单文件体积过大的问题，我们打包的时候，加载速度就会变慢
+    所以，在上线打包的时候，我们可以使用cdn节点的方式引入我们需要的包，这样，在打包的时候，就不用加载本地的包了，而是去外网请求
+
+    解决：通过webpack的externals节点，来配置并加载外部的CDN资源，凡是声明再externals中的第三方依赖包，都不会被打包
+### vue.config.js文件中：
+    module.exports = {
+        lintOnSave: false,//关闭eslint
+        chainWebpack:config=>{
+            // when判断当前处于什么编译模式：production就执行回调函数  entry得到默认打包入口文件，再清空入口文件，再追加自己的打包入口文件
+            // 发布上线模式
+            config.when(process.env.NODE_ENV === 'production',config=>{
+                config.entry('app').clear().add('./src/main-prod.js')
+
+                // externals加载外部CDN资源：只在发布模式使用  在windouwn全局查找下面的对象
+                config.set('externals',{
+                    vue:'Vue',
+                    'vue-router':'VueRouter',
+                    axios:'axios',
+                    lodash:'_',
+                    echarts:'echarts',
+                    nprogress:'Nprogress',
+                    'vue-quill-editor':'VueQuillEditor'
+                })
+            })
+
+            // 开发模式
+            config.when(process.env.NODE_ENV === 'development',config=>{
+                config.entry('app').clear().add('./src/main-dev.js')
+            })
+        }
+    }
+### index.html文件的头部，添加CDN资源引用：
+    吧发布模式入口文件prod_env里面的import引入的外部样式css删掉,再index.html中引入cdn
+    <!-- nprogress 的样式表文件 -->
+        <link rel="stylesheet" href="https://cdn.staticfile.org/nprogress/0.2.0/nprogress.min.css" />
+        <!-- 富文本编辑器 的样式表文件 -->
+        <link rel="stylesheet" href="https://cdn.staticfile.org/quill/1.3.4/quill.core.min.css" />
+        <link rel="stylesheet" href="https://cdn.staticfile.org/quill/1.3.4/quill.snow.min.css" />
+        <link rel="stylesheet" href="https://cdn.staticfile.org/quill/1.3.4/quill.bubble.min.css" />
+        <!-- element-ui 的样式表文件 -->
+        <!-- <link rel="stylesheet" href="https://cdn.staticfile.org/element-ui/2.8.2/theme-chalk/index.css" /> -->
+    externals里面定义的vue,axios等插件在index.html中引入,原来的import不要删掉,打包时不会打包的
+    <script src="https://cdn.staticfile.org/vue/2.5.22/vue.min.js"></script>
+        <script src="https://cdn.staticfile.org/vue-router/3.0.1/vue-router.min.js"></script>
+        <script src="https://cdn.staticfile.org/axios/0.18.0/axios.min.js"></script>
+        <script src="https://cdn.staticfile.org/lodash.js/4.17.11/lodash.min.js"></script>
+        <script src="https://cdn.staticfile.org/echarts/4.1.0/echarts.min.js"></script>
+        <script src="https://cdn.staticfile.org/nprogress/0.2.0/nprogress.min.js"></script>
+        <!-- 富文本编辑器的 js 文件 -->
+        <script src="https://cdn.staticfile.org/quill/1.3.4/quill.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/vue-quill-editor@3.0.4/dist/vue-quill-editor.js"></script>
+
+        <!-- element-ui 的 js 文件 -->
+        <!-- <script src="https://cdn.staticfile.org/element-ui/2.8.2/index.js"></script> -->
+### CDN优化elementui的打包
+#### 再main-prod.js中 注释掉elementui按需加载的代码
+    <!-- element-ui 的样式表文件 -->
+    <link rel="stylesheet" href="https://cdn.staticfile.org/element-ui/2.8.2/theme-chalk/index.css" />
+#### 再index.html的头部，用CDN加载emelentui的js和css样式
+    <!-- element-ui 的 js 文件 -->
+    <script src="https://cdn.staticfile.org/element-ui/2.8.2/index.js"></script>
+    
+## 路由懒加载
+    当打包构建项目时，js包会变得非常大，影响页面加载，如果我们吧不同路由对应的组件分割成不同的代码块，然后当路由被访问的时候才加载对应组件，这样就更加高效了
+### 安装包：@babel/plugin- syntax-dynamic-import
+    文档:https://router.vuejs.org/zh/guide/advanced/lazy-loading.html
+    命令：npm install --save-dev @babel/plugin-syntax-dynamic-import
+    或者面板：选择开发依赖---  @babel/plugin-syntax-dynamic-import
+### 在babel.config.js配置文件中声明此插件
+    //  这是项目发布阶段需要用到的babel插件 
+    const prodPlugins = []
+    if(process.env.NODE_ENV ==='production'){
+        // 如果是发布阶段就把发布阶段需要的插件放进数组 
+        prodPlugins.push('transform-remove-console')
+    }
+    module.exports = {
+    presets: [
+        '@vue/cli-plugin-babel/preset',
+        ["@babel/preset-env", { "modules": false }]
+    ],
+    plugins: [
+        [
+        "component",
+        {
+        "libraryName": "element-ui",
+        "styleLibraryName": "theme-chalk"
+        }
+        ],
+        // 发布产品时候的插件数组 展开运算符
+        ...prodPlugins ,
+        // 路由懒加载插件
+        "@babel/plugin-syntax-dynamic-import" 
+    ]
+    }
+### router.js路由的按需加载形式改为:
+    import Vue from 'vue'
+    import Router from 'vue-router'
+
+    // 路由懒加载
+    const Login = () => import(/* webpackChunkName: "login" */ './components/Login.vue')              
+
+    const Home = () => import(/* webpackChunkName: "home_welcome" */ './components/home/home.vue')
+    const Welcome = () => import(/* webpackChunkName: "home_welcome" */ './components/home/welcome.vue')
+
+    const Users = () => import(/* webpackChunkName: "users" */ './components/home/user/users.vue')
+
+    const Rights = () => import(/* webpackChunkName: "rights_roles" */ './components/home/power/Rights.vue')
+    const Roles = () => import(/* webpackChunkName: "rights_roles" */ './components/home/power/Roles.vue')
+
+    const Cate = () => import(/* webpackChunkName: "goods_cate_params_list_add" */ './components/home/goods/Cate.vue')
+    const Params = () => import(/* webpackChunkName: "goods_cate_params_list_add" */ './components/home/goods/Params.vue')
+    const List = () => import(/* webpackChunkName: "goods_cate_params_list_add" */ './components/home/goods/List.vue')
+    const AddGoodsList = () => import(/* webpackChunkName: "goods_cate_params_list_add" */ './components/home/goods/AddGoodsList.vue')
+
+    const Order = () => import(/* webpackChunkName: "order" */ './components/home/orders/Order.vue')
+    const Report = () => import(/* webpackChunkName: "report" */ './components/home/report/Report.vue')
+
+    Vue.use(Router)
+
+    // 创建接收路由
+    const router  = new Router({
+
+## 首页内容定制
+### vue.congif.js中添加属性  用于判断是否是发布模式
+    module.exports = {
+        lintOnSave: false,//关闭eslint
+        chainWebpack:config=>{
+            // when判断当前处于什么编译模式：production就执行回调函数  entry得到默认打包入口文件，再清空入口文件，再追加自己的打包入口文件
+            // 发布上线模式
+            config.when(process.env.NODE_ENV === 'production',config=>{
+                config.entry('app').clear().add('./src/main-prod.js')
+
+                // externals加载外部CDN资源：只在发布模式使用
+                config.set('externals',{
+                    vue:'Vue',
+                    'vue-router':'Router',
+                    axios:'axios',
+                    lodash:'_',
+                    echarts:'echarts',
+                    nprogress:'NProgress',
+                    'vue-quill-editor':'VueQuillEditor'
+                })
+
+                // 找到html插件   新增一个参数isProd 发布模式为true 首页内容定制
+                config.plugin('html').tap(args=>{
+                    args[0].isProd = true
+                    return args
+                })
+            })
+
+            // 开发模式
+            config.when(process.env.NODE_ENV === 'development',config=>{
+                config.entry('app').clear().add('./src/main-dev.js')
+
+                // 找到html插件   新增一个参数isProd 开发模式为false 首页内容定制
+                config.plugin('html').tap(args=>{
+                    args[0].isProd = false
+                    return args
+                })
+            })
+        }
+    }
+### index.html中：
+    <title><%= htmlWebpackPlugin.options.isProd ? '' : 'dev-' %></title>
+    <!-- 图标库 -->
+    <link rel="stylesheet" href="//at.alicdn.com/t/font_2901871_ymo3frpcfqg.css">
+    
+    <!-- 如果是发布模式 渲染下面的CDN -->
+    <% if(htmlWebpackPlugin.options.isProd) { %>
+      <!-- nprogress 的样式表文件 -->
+      <link rel="stylesheet" href="https://cdn.staticfile.org/nprogress/0.2.0/nprogress.min.css" />
+      <!-- 富文本编辑器 的样式表文件 -->
+      <link rel="stylesheet" href="https://cdn.staticfile.org/quill/1.3.4/quill.core.min.css" />
+      <link rel="stylesheet" href="https://cdn.staticfile.org/quill/1.3.4/quill.snow.min.css" />
+      <link rel="stylesheet" href="https://cdn.staticfile.org/quill/1.3.4/quill.bubble.min.css" />
+      <!-- element-ui 的样式表文件 -->
+      <link rel="stylesheet" href="https://cdn.staticfile.org/element-ui/2.15.6/theme-chalk/index.min.css" />
+
+      <script src="https://cdn.staticfile.org/vue/2.6.2/vue.min.js"></script>
+      <script src="https://cdn.staticfile.org/vue-router/3.5.2/vue-router.min.js"></script>
+      <script src="https://cdn.staticfile.org/axios/0.24.0/axios.min.js"></script>
+      <script src="https://cdn.staticfile.org/lodash.js/4.17.11/lodash.min.js"></script>
+      <script src="https://cdn.staticfile.org/echarts/4.1.0/echarts.min.js"></script>
+      <script src="https://cdn.staticfile.org/nprogress/0.2.0/nprogress.min.js"></script>
+      <!-- 富文本编辑器的 js 文件 -->
+      <script src="https://cdn.staticfile.org/quill/1.3.4/quill.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/vue-quill-editor@3.0.4/dist/vue-quill-editor.js"></script>
+
+      <!-- element-ui 的 js 文件 -->
+      <script src="https://cdn.staticfile.org/element-ui/2.15.6/index.min.js"></script>
+    <% } %>
+
+## 不生成.map文件
+    当我们执行 npm run build 命令打包完一个项目后，会得到一个dist目录，里面有一个js目录，存放了该项目编译后的所有js文件。
+    每个js文件都有一个相应的 .map 文件，它们仅是用来调试代码的，可以加快打包速度，但会增大打包体积，线上我们是不需要这个代码的。这里我们需要配置不生成map文件。
+    在 vue.config.js 中编写以下内容：
+    module.exports = {
+     productionSourceMap: false
+    }
+
+# 部署上线项目
+## 通过node创建web服务器
+    创建node项目，并安装express，通过express快速创建web服务器，将vue打包生成的dist文件夹，托管为静态资源即可:
+    新建文件夹vue_shop_server  再vs中打开，
+
+    运行终端命令：npm init -y  初始化包管理文件
+
+    npm i express -S         安装第三方的包
+
+    安装成功后吧前端的dist文件夹复制到新建的vue_shop_server文件夹中
+
+    再新建文件：app.js  入口文件，在文件中写：
+        // 导入express
+        const express = require('express')
+
+        // 创建web服务器 
+        const app = express()
+
+        //  托管静态资源目录
+        app.use(express.static('./dist'))
+
+        //  启动web服务器 启动服务器，运行在80端口
+        app.listen(80,()=>{
+            console.log('web server runing at http://127.0.0.1')
+        })
+    
+    最后测试：node .\app.js 启动服务器  输出web server runing at http://127.0.0.1 就对了  
+    打开http://127.0.0.1 看到了打包后的web项目
+
+## 开启gzip配置
+    使用gzip可以减小文件体积，是传输速度更快
+    通过服务器端使用express做gzip压缩：
+    //安装包
+    npm install compression -S
+    // 导入express
+    const express = require('express')
+    // 导入gzip包compression
+    const compression = require('compression')
+
+    // 创建web服务器 
+    const app = express()
+    //启用中间件  要把这行代码写在静态资源托管之前
+    app.use(compression())
+    //  托管静态资源目录
+    app.use(express.static('./dist'))
+
+    //  启动web服务器 启动服务器，运行在80端口
+    app.listen(80,()=>{
+        console.log('web server runing at http://127.0.0.1')
+    })
+
+## 配置https服务
+    http协议传输的数据都是明文的 不安全 
+    申请SSL证书 https://freessl.org
+### 输入要申请的域名并选择品牌
+
+### 输入自己的邮箱并选择相关选项
+
+### 登录买的服务器，验证DNS(再域名管理后台添加TXT记录)
+
+### 验证通过后，下载ssl证书（full_chain.pem公钥，private.key私钥）通过公钥私钥部署https网站
+    将公钥和私钥复制到vue_shop_server项目中
+
+    // 导入express
+    const express = require('express')
+    // 导入gzip包compression
+    const compression = require('compression')
+    // 导入https
+    const https = require('https')
+    // 导入fs
+    const fs = require('fs')
+
+    // 创建web服务器 
+    const app = express()
+
+    const options={
+        cert:fs.readFileSync('./full_chain.pem'),
+        key:fs.readFileSync('./orivate.key')
+    }
+
+    //启用中间件  要把这行代码写在静态资源托管之前
+    app.use(compression())
+    //  托管静态资源目录
+    app.use(express.static('./dist'))
+
+    //  启动web服务器 启动服务器，运行在80端口
+    // app.listen(80,()=>{
+    //     console.log('web server runing at http://127.0.0.1')
+    // })
+
+    // https启动服务器，默认运行在443端口
+    https.createServer(options,app).listen(443)
+
+## 使用pm2管理服务器的网站应用
+    关闭node .\app.js运行窗口之后，保证网页还能正常运行
+### 再服务器中安装pm2 (cmd)： npm i pm2 -g   全局安装
+    cmd命令： npm i pm2 -g
+### 启动项目：pm2 start 脚本 --name 自定义名称
+    在vue_shop_server服务器项目中启动powershell：pm2 start .\app.js --name web_vueshop
+### 查看再pm2中运行的项目： pm2 ls
+    cmd命令：pm2 ls    
+    会以表格的形式展示
+### 重启项目：pm2 restart 自定义名称/id
+    cmd命令：pm2 restart web_vueshop
+    或者cmd命令：pm2 restart 0
+### 停止项目： pm2 stop 自定义名称/id
+     cmd命令：pm2 stop web_vueshop
+     或者cmd命令：pm2 stop 0
+### 删除项目： pm2 delete 自定义名称/id
+     cmd命令：pm2 delete web_vueshop
+     或者cmd命令：pm2 delete 0

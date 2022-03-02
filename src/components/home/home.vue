@@ -3,7 +3,7 @@
     <!-- 头部 -->
     <el-header class="header">
       <div class="tb">
-        <img src="../../assets/logo.png" alt="" />
+        <img src="../../assets/img/logo.png" alt="" />
         <span>电商后台管理系统</span>
       </div>
 

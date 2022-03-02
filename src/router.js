@@ -1,22 +1,29 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Login from './components/Login.vue'
-import Home from './components/home/home.vue'
-import Welcome from './components/home/welcome.vue'
-import Users from './components/home/user/users.vue'
-import Rights from './components/home/power/Rights.vue'
-import Roles from './components/home/power/Roles.vue'
-import Cate from './components/home/goods/Cate.vue'
-import Params from './components/home/goods/Params.vue'
-import List from './components/home/goods/List.vue'
-import AddGoodsList from './components/home/goods/AddGoodsList.vue'
-import Order from './components/home/orders/Order.vue'
-import Report from './components/home/report/Report.vue'
+
+// 路由懒加载
+const Login = () => import(/* webpackChunkName: "login" */ './components/Login.vue')              
+
+const Home = () => import(/* webpackChunkName: "home_welcome" */ './components/home/home.vue')
+const Welcome = () => import(/* webpackChunkName: "home_welcome" */ './components/home/welcome.vue')
+
+const Users = () => import(/* webpackChunkName: "users" */ './components/home/user/users.vue')
+
+const Rights = () => import(/* webpackChunkName: "rights_roles" */ './components/home/power/Rights.vue')
+const Roles = () => import(/* webpackChunkName: "rights_roles" */ './components/home/power/Roles.vue')
+
+const Cate = () => import(/* webpackChunkName: "goods_cate_params_list_add" */ './components/home/goods/Cate.vue')
+const Params = () => import(/* webpackChunkName: "goods_cate_params_list_add" */ './components/home/goods/Params.vue')
+const List = () => import(/* webpackChunkName: "goods_cate_params_list_add" */ './components/home/goods/List.vue')
+const AddGoodsList = () => import(/* webpackChunkName: "goods_cate_params_list_add" */ './components/home/goods/AddGoodsList.vue')
+
+const Order = () => import(/* webpackChunkName: "order" */ './components/home/orders/Order.vue')
+const Report = () => import(/* webpackChunkName: "report" */ './components/home/report/Report.vue')
 
 Vue.use(Router)
 
 // 创建接收路由
-const router = new Router({
+const router  = new Router({
     routes: [
         // 访问的是/  就进入登录组件
         {
@@ -113,9 +120,9 @@ router.beforeEach((to, from, next) => {
 })
 
 // 全局后置路由守卫 ：初始化时执行，每次路由切换后执行
-router.afterEach((to) => {
-    document.title = to.meta.title || '电商后台管理系统'
-})
+// router.afterEach((to) => {
+//     document.title = to.meta.title || '电商后台管理系统'
+// })
 
 
 
