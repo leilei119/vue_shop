@@ -12,7 +12,7 @@
       <!-- 添加分类按钮区域 -->
       <el-row>
         <el-col>
-          <el-button class="tjyh" @click="openAddCateDialog">添加分类</el-button>
+          <el-button type="primary"  plain @click="openAddCateDialog">添加分类</el-button>
         </el-col>
       </el-row>
 
@@ -330,13 +330,6 @@ export default {
 </script>
 
 <style scoped>
-.tjyh {
-  background: #1cbcc5;
-  border: 1px solid #fee202;
-  font-family: cursive;
-  color: #f5f5f5;
-  text-shadow: 6px 2px 2px #fee202;
-}
 .treetable {
   margin-top: 15px;
 }

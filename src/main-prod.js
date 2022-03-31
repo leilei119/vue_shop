@@ -9,13 +9,14 @@ import VueQuillEditor from 'vue-quill-editor' // 导入富文本编辑器
 import echarts from 'echarts'
 // 导入进度条NProgress包的js和css
 import NProgress from 'nprogress'
-import { Timeline, TimelineItem, Upload, CheckboxGroup, Checkbox, Steps, Step, Tabs, TabPane, Alert, Cascader, Select, Option, Tree, Tag, Dialog, Form, FormItem, Input, Button, Message, Container, Header, Aside, Main, Menu, Submenu, MenuItem, Breadcrumb, BreadcrumbItem, Card, Row, Col, Table, TableColumn, Switch, Tooltip, Pagination, MessageBox } from 'element-ui'
+import { Footer,Dropdown, DropdownMenu,DropdownItem, ButtonGroup, DatePicker ,Timeline, TimelineItem, Upload, CheckboxGroup, Checkbox, Steps, Step, Tabs, TabPane, Alert, Cascader, Select, Option, Tree, Tag, Dialog, Form, FormItem, Input, Button, Message, Container, Header, Aside, Main, Menu, Submenu, MenuItem, Breadcrumb, BreadcrumbItem, Card, Row, Col, Table, TableColumn, Switch, Tooltip, Pagination, MessageBox } from 'element-ui'
 
 Vue.use(Form)
 Vue.use(FormItem)
 Vue.use(Input)
 Vue.use(Button)
 Vue.use(Container)
+Vue.use(Footer)
 Vue.use(Header)
 Vue.use(Aside)
 Vue.use(Main)
@@ -48,7 +49,12 @@ Vue.use(CheckboxGroup)
 Vue.use(Checkbox)
 Vue.use(Upload)
 Vue.use(TimelineItem)
-Vue.use(Timeline)
+Vue.use(Timeline) 
+Vue.use(DatePicker)
+Vue.use(ButtonGroup)
+Vue.use(Dropdown)
+Vue.use(DropdownMenu)
+Vue.use(DropdownItem)
 
 
 Vue.prototype.$mess = Message//全局配置Message 将Message组件挂载到vue的原型对象上
@@ -61,7 +67,7 @@ Vue.use(VueQuillEditor)//将富文本编辑器插件注册为全局组件
 
 
 // 配置请求的根路径
-axios.defaults.baseURL = 'http://39.105.174.57:8889/api/private/v1/' // 部署服务器的地址
+axios.defaults.baseURL = 'http://39.106.92.89:8889/api/private/v1/' // 部署服务器的地址
 // axios.defaults.baseURL = 'http://127.0.0.1:8888/api/private/v1/'
 
 // 设置拦截器,为请求头中的Authorization字段添加token   之后每次请求数据时看这个字段中是否有token就知道是否有权限查看了

@@ -12,7 +12,7 @@
       <!-- 添加角色按钮区域 -->
       <el-row>
         <el-col>
-          <el-button class="tjyh" @click="addRights">添加角色</el-button>
+          <el-button type="primary" @click="addRights" plain>添加角色</el-button>
         </el-col>
       </el-row>
 
@@ -319,13 +319,6 @@ export default {
 }
 </script>
 <style scoped>
-.tjyh {
-  background: #eba93c;
-  border: 1px solid #fee202;
-  font-family: cursive;
-  color: #f5f5f5;
-  text-shadow: 6px 2px 2px #fee202;
-}
 .el-tag {
   margin: 10px;
 }

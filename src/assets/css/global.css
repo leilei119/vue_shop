@@ -254,6 +254,11 @@ select {
 
 }
 
+::-webkit-scrollbar {width:6px;height:4px;}
+::-webkit-scrollbar-track {-webkit-box-shadow:inset 0 0 6px rgba(255,255,255,0.9);border-radius: 10px;}
+::-webkit-scrollbar-thumb {border-radius:5px; background: rgba(66,66,66,1);-webkit-box-shadow:inset 0 0 6px rgba(227,227,227,87.5);}
+::-webkit-scrollbar-thumb:window-inactive {background: rgba(227,227,227,0.5);}
+
 html,
 body,
 #app {
@@ -281,22 +286,8 @@ textarea {
     font-family: cursive;
 }
 
-.el-input__inner {
-    background-color: #febd50;
-    border: white;
-    border-bottom: 1px #606266 dashed;
-}
 
 
-
-.el-button:focus,
-.el-button:hover,
-.el-button:active {
-    color: #75b1ef;
-    border-color: #feffff;
-    background-color: #ffeb3b;
-    text-shadow: 6px 2px 2px #9be184;
-}
 
 .el-breadcrumb{
     margin-bottom: 20px;

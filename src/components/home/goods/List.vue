@@ -20,7 +20,7 @@
 
         <!-- 添加商品区域 -->
         <el-col :span="4">
-          <el-button class="tjyh" @click="goAddPage">添加商品</el-button>
+          <el-button type="primary"  plain  @click="goAddPage">添加商品</el-button>
         </el-col>
       </el-row>
 

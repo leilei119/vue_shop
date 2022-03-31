@@ -33,15 +33,14 @@
               <span>{{ m.authName }}</span>
             </template>
             <!-- 二级菜单 -->
-            <el-menu-item
-              v-for="mc in m.children"
-              :key="mc.id"
-              :index="'/' + mc.path"
-              @click="saveNavState('/' + mc.path)"
-            >
+            <el-menu-item v-for="mc in m.children" :key="mc.id" :index="'/' + mc.path" @click="saveNavState('/' + mc.path)">
               <i class="el-icon-menu"></i>
               <span>{{ mc.authName }}</span>
             </el-menu-item>
+          </el-submenu>
+          <el-submenu index="pur">
+            <template slot="title"> <i class="iconfont icon-caigouoff"></i> <span>采购管理</span></template>
+            <el-menu-item index="/pur" @click="saveNavState('/pur')"> <i class="el-icon-menu"></i> <span>采购入库</span></el-menu-item>
           </el-submenu>
         </el-menu>
       </el-aside>
@@ -67,7 +66,7 @@ export default {
         102: 'iconfont icon-houtaiguanli-tiaochawenjuan',
         145: 'iconfont icon-houtaitubiao-16',
       }, //创建图标对象
-      activePath:'',//被激活的链接地址
+      activePath: '', //被激活的链接地址
     }
   },
   methods: {
@@ -89,16 +88,16 @@ export default {
       this.iscollape = !this.iscollape
     },
     // 点击菜单栏保存当前点击的path地址
-    saveNavState(activePath){
-      window.sessionStorage.setItem('activePath',activePath)
+    saveNavState(activePath) {
+      window.sessionStorage.setItem('activePath', activePath)
       this.activePath = activePath
-    }
+    },
   },
   // 页面一加载就执行
   created() {
     this.getMenuList()
     // 保存激活的状态地址
-    this.activePath=window.sessionStorage.getItem('activePath')
+    this.activePath = window.sessionStorage.getItem('activePath')
   },
 }
 </script>
@@ -154,13 +153,20 @@ export default {
 .iconfont {
   padding-right: 10px;
 }
-.tc{
-    background: #1cbcc5;
-    border: 1px solid #fee202;
-    font-family: cursive;
-    color: #f5f5f5;
-    text-shadow: 6px 2px 2px #fee202;
-    border-radius: 27% !important;
-
+.tc {
+  background: #1cbcc5;
+  border: 1px solid #fee202;
+  font-family: cursive;
+  color: #f5f5f5;
+  text-shadow: 6px 2px 2px #fee202;
+  border-radius: 27% !important;
 }
+ .el-button:focus, 
+.el-button:hover,
+.el-button:active {
+    color: #75b1ef;
+    border-color: #feffff;
+    background-color: #ffeb3b;
+    text-shadow: 6px 2px 2px #9be184;
+} 
 </style>

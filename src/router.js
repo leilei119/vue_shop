@@ -20,6 +20,13 @@ const AddGoodsList = () => import(/* webpackChunkName: "goods_cate_params_list_a
 const Order = () => import(/* webpackChunkName: "order" */ './components/home/orders/Order.vue')
 const Report = () => import(/* webpackChunkName: "report" */ './components/home/report/Report.vue')
 
+
+const Pur = () => import(/* webpackChunkName: "Pur" */ './components/home/purchase/Pur.vue')
+
+
+const ShouYe = () => import(/* webpackChunkName: "ShouYe" */ './components/qianduan/ShouYe.vue')
+
+
 Vue.use(Router)
 
 // 创建接收路由
@@ -28,7 +35,18 @@ const router  = new Router({
         // 访问的是/  就进入登录组件
         {
             path: '/',
-            redirect: '/login',
+            // redirect: '/login',
+            redirect:'/shouye',
+        },
+        // 前台展示页
+        {
+            name: 'shouye',
+            path: '/shouye',
+            component: ShouYe,
+            meta: {// 具体权限  有无权限访问
+                //isAuth:false, //不参与权限
+                title: '蕾蕾的网站'
+            }
         },
         // 登录路由组件
         {
@@ -100,6 +118,11 @@ const router  = new Router({
                     name:'report',
                     path:'/reports',
                     component:Report
+                },
+                {//采购入库
+                    name:'pur',
+                    path:'/pur',
+                    component:Pur
                 }
             ]
         }
@@ -111,7 +134,7 @@ const router  = new Router({
 // 全局前置路由守卫：初始化时执行，每次路由切换前执行
 router.beforeEach((to, from, next) => {
     // 如果用户访问的是登录页  就直接放行
-    if (to.path === '/login') return next()
+    if (to.path === '/login' || to.path === '/shouye') return next()
     // 从sessionStorage中获取到保存的token值
     const token = window.sessionStorage.getItem('token')
     // 没有token，强制跳转到登录页
@@ -120,9 +143,9 @@ router.beforeEach((to, from, next) => {
 })
 
 // 全局后置路由守卫 ：初始化时执行，每次路由切换后执行
-// router.afterEach((to) => {
-//     document.title = to.meta.title || '电商后台管理系统'
-// })
+router.afterEach((to) => {
+    document.title = to.meta.title || 'dev蕾蕾的网站'
+})
 
 
 

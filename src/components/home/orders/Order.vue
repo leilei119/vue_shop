@@ -13,7 +13,7 @@
       <el-row :gutter="20">
         <el-col :span="20">
           <el-input placeholder="你要搜索啥？^_^" class="ss" v-model="queryInfo.query" clearable @clear="getOrderList">
-            <el-button slot="append" icon="el-icon-search" @click="getOrderList"></el-button>
+            <el-button slot="append" type="primary" plain icon="el-icon-search" @click="getOrderList"></el-button>
           </el-input>
         </el-col>
       </el-row>

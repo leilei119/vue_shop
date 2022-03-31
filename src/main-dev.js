@@ -3,7 +3,7 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from './router' //引入router.js
 import './assets/css/global.css' // 导入全局样式表
-import { Timeline, TimelineItem, Upload, CheckboxGroup, Checkbox, Steps, Step, Tabs, TabPane, Alert, Cascader, Select, Option, Tree, Tag, Dialog, Form, FormItem, Input, Button, Message, Container, Header, Aside, Main, Menu, Submenu, MenuItem, Breadcrumb, BreadcrumbItem, Card, Row, Col, Table, TableColumn, Switch, Tooltip, Pagination, MessageBox } from 'element-ui'
+import { Footer, Dropdown, DropdownMenu,DropdownItem, ButtonGroup, DatePicker ,Timeline, TimelineItem, Upload, CheckboxGroup, Checkbox, Steps, Step, Tabs, TabPane, Alert, Cascader, Select, Option, Tree, Tag, Dialog, Form, FormItem, Input, Button, Message, Container, Header, Aside, Main, Menu, Submenu, MenuItem, Breadcrumb, BreadcrumbItem, Card, Row, Col, Table, TableColumn, Switch, Tooltip, Pagination, MessageBox } from 'element-ui'
 import axios from 'axios'
 import TreeTable from 'vue-table-with-tree-grid'
 import VueQuillEditor from 'vue-quill-editor' // 导入富文本编辑器
@@ -22,6 +22,7 @@ Vue.use(Input)
 Vue.use(Button)
 Vue.use(Container)
 Vue.use(Header)
+Vue.use(Footer)
 Vue.use(Aside)
 Vue.use(Main)
 Vue.use(Menu)
@@ -54,6 +55,11 @@ Vue.use(Checkbox)
 Vue.use(Upload)
 Vue.use(TimelineItem)
 Vue.use(Timeline)
+Vue.use(DatePicker)
+Vue.use(ButtonGroup)
+Vue.use(Dropdown)
+Vue.use(DropdownMenu)
+Vue.use(DropdownItem)
 
 
 Vue.prototype.$mess = Message//全局配置Message 将Message组件挂载到vue的原型对象上
