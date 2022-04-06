@@ -272,6 +272,7 @@ body,
     /* overflow: hidden; */
 
     min-width: 1366px;
+    background: darksalmon;
 
 }
 
@@ -286,7 +287,28 @@ textarea {
     font-family: cursive;
 }
 
-
+.el-menu--horizontal>.el-submenu .el-submenu__title{
+    border-bottom: none;
+    color: #f4f8ff !important;
+}
+.el-submenu__title i {
+    color: #f4f8ff;
+}
+.el-menu.el-menu--horizontal {
+    border-bottom:none;
+}
+.el-menu--horizontal>.el-menu-item:not(.is-disabled):focus, .el-menu--horizontal>.el-menu-item:not(.is-disabled):hover, .el-menu--horizontal>.el-submenu .el-submenu__title:hover {
+    background-color: #fff0;
+    color: #d7d9df !important;
+}
+.el-menu {
+    border-right: none;
+    background-color: #fff0 !important;
+}
+.el-menu--popup {
+    border: none !important;
+    box-shadow: none !important;
+}
 
 
 .el-breadcrumb{
